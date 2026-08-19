@@ -522,7 +522,7 @@ async function abrirStop() {
 
   irPara('tela-stop');
   $('stop-letra').textContent = state.round.letter;
-  $('btn-stop').disabled = false;
+  $('btn-stop').disabled = true; // começa travado até preencher tudo — ver atualizarEstadoBotaoStop
   $('stop-votacao').hidden = true;
   $('stop-resultado').hidden = true;
   renderizarCategorias(state.round.categories);
@@ -559,10 +559,22 @@ function renderizarCategorias(categorias) {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         submitAnswer(state.round.id, state.player.id, cat, input.value).catch(console.error);
+        atualizarEstadoBotaoStop(categorias);
       }, 400);
     });
     container.appendChild(div);
   });
+  atualizarEstadoBotaoStop(categorias);
+}
+
+// Stop só é permitido depois que TODAS as categorias têm resposta
+// não-vazia. Regra clássica do jogo — sem isso, dava pra "trapacear"
+// parando a rodada com tudo em branco.
+function atualizarEstadoBotaoStop(categorias) {
+  const inputs = document.querySelectorAll('#stop-categorias input');
+  const todasPreenchidas = Array.from(inputs).every((i) => i.value.trim().length > 0);
+  $('btn-stop').disabled = !todasPreenchidas;
+  $('btn-stop').title = todasPreenchidas ? '' : 'Preenche todas as categorias antes de dar Stop';
 }
 
 function iniciarTimer(startedAtIso) {
