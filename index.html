@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Noite de Jogos — Multiplayer</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: #0e0e14;
+    color: #f2f2f5;
+    margin: 0;
+    padding: 20px;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+  h1, h2, h3 { margin-top: 0; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card {
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #12121a;
+    color: #fff;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #ffcb45;
+    color: #1a1407;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  button.secondary { background: #2a2a35; color: #f2f2f5; }
+  button.link { background: transparent; color: #ffcb45; text-decoration: underline; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .hint { font-size: 13px; color: #9a9aa5; }
+  .erro { color: #ff6b6b; font-size: 13px; }
+  #lobby-jogadores, #stop-placar { list-style: none; padding: 0; }
+  #lobby-jogadores li, #stop-placar li {
+    background: #12121a; padding: 10px; border-radius: 8px; margin-bottom: 6px;
+  }
+  .stop-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .stop-letra { font-size: 40px; font-weight: 800; color: #ffcb45; }
+  .stop-timer { font-size: 24px; font-weight: 700; }
+  .stop-categoria { margin-bottom: 10px; }
+  .stop-categoria label { display: block; font-size: 13px; color: #9a9aa5; margin-bottom: 4px; }
+  .stop-voto-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #12121a; padding: 10px; border-radius: 8px; margin-bottom: 6px;
+  }
+  .stop-voto-item span { flex: 1; font-size: 14px; }
+  .stop-voto-item button { width: auto; padding: 6px 10px; margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- TELA: ENTRADA -->
+<!-- ============================================================ -->
+<div id="tela-entrada" class="screen active">
+  <h1>🎲 Noite de Jogos</h1>
+
+  <section class="card">
+    <h2>Entrar numa sala</h2>
+    <input id="input-codigo-sala" placeholder="Código da sala (ex: BJ4K2)" maxlength="6" autocapitalize="characters" />
+    <input id="input-nickname" placeholder="Seu apelido" maxlength="24" />
+    <button id="btn-entrar-sala">Entrar</button>
+    <p id="erro-entrar-sala" class="erro" hidden></p>
+  </section>
+
+  <section class="card">
+    <h2>Criar uma sala</h2>
+    <input id="input-nickname-host" placeholder="Seu apelido" maxlength="24" />
+    <button id="btn-criar-sala">Criar sala de Stop</button>
+    <p class="hint">Não precisa de conta pra criar uma sala avulsa.</p>
+    <p id="erro-criar-sala" class="erro" hidden></p>
+  </section>
+
+  <section class="card">
+    <h2>Tem conta?</h2>
+    <p class="hint">Login é só necessário se você quer salvar grupos e histórico entre noites.</p>
+    <button id="btn-abrir-login" class="secondary">Entrar / Criar conta</button>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TELA: LOGIN -->
+<!-- ============================================================ -->
+<div id="tela-login" class="screen">
+  <h2>Entrar</h2>
+  <input id="login-email" type="email" placeholder="E-mail" />
+  <input id="login-senha" type="password" placeholder="Senha" />
+  <button id="btn-fazer-login">Entrar</button>
+  <button id="btn-ir-cadastro" class="link">Não tenho conta ainda</button>
+  <button id="btn-voltar-entrada-1" class="secondary">Voltar</button>
+  <p id="erro-login" class="erro" hidden></p>
+</div>
+
+<div id="tela-cadastro" class="screen">
+  <h2>Criar conta</h2>
+  <input id="cadastro-nickname" placeholder="Seu apelido" maxlength="24" />
+  <input id="cadastro-email" type="email" placeholder="E-mail" />
+  <input id="cadastro-senha" type="password" placeholder="Senha (mín. 6 caracteres)" />
+  <button id="btn-fazer-cadastro">Criar conta</button>
+  <button id="btn-voltar-entrada-2" class="secondary">Voltar</button>
+  <p id="erro-cadastro" class="erro" hidden></p>
+</div>
+
+<!-- ============================================================ -->
+<!-- TELA: LOBBY -->
+<!-- ============================================================ -->
+<div id="tela-lobby" class="screen">
+  <h2>Sala <span id="lobby-codigo"></span></h2>
+  <p class="hint">Compartilha esse código com a galera pra entrarem.</p>
+
+  <ul id="lobby-jogadores"></ul>
+
+  <button id="btn-iniciar-jogo" hidden>Começar</button>
+  <p id="lobby-esperando" class="hint">Esperando o host começar o jogo...</p>
+  <p id="erro-lobby" class="erro" hidden></p>
+</div>
+
+<!-- ============================================================ -->
+<!-- TELA: STOP -->
+<!-- ============================================================ -->
+<div id="tela-stop" class="screen">
+  <div class="stop-header">
+    <span class="stop-letra" id="stop-letra"></span>
+    <span class="stop-timer" id="stop-timer">60s</span>
+  </div>
+
+  <div id="stop-categorias"></div>
+
+  <button id="btn-stop">🛑 STOP!</button>
+
+  <div id="stop-votacao" hidden>
+    <h3>Hora de votar</h3>
+    <div id="stop-votacao-lista"></div>
+    <button id="btn-finalizar-votacao">Ver resultado</button>
+  </div>
+
+  <div id="stop-resultado" hidden>
+    <h3>Resultado da rodada</h3>
+    <ul id="stop-placar"></ul>
+    <button id="btn-proxima-rodada">Próxima rodada</button>
+    <button id="btn-sair-sala" class="secondary">Sair da sala</button>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+// ============================================================
+// CONFIG — mesmas credenciais do supabase-client.js original
+// ============================================================
+const SUPABASE_URL = 'https://qzotxtcuopaqgcfpjntb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6b3R4dGN1b3BhcWdjZnBqbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0Mjk1NjIsImV4cCI6MjA5OTAwNTU2Mn0.QCJITizABxr7IynONUxyd1JNcSkyeL1FGnJVDQGXZl8';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================
+// ESTADO GLOBAL DA SESSÃO DE JOGO (substitui os antigos window.__X__)
+// ============================================================
+const state = { room: null, player: null, round: null };
+
+const $ = (id) => document.getElementById(id);
+
+function irPara(telaId) {
+  document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
+  $(telaId).classList.add('active');
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+async function ensureSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) return session;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+  return data.session;
+}
+
+async function signUp(email, password, nickname) {
+  const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { nickname } } });
+  if (error) throw error;
+  return data;
+}
+
+async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+ensureSession().catch(console.error);
+
+// ============================================================
+// SALAS
+// ============================================================
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function generateRoomCode(length = 5) {
+  let code = '';
+  for (let i = 0; i < length; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+  return code;
+}
+
+async function createRoom({ gameId, themeId = null, settings = {} }) {
+  await ensureSession();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateRoomCode();
+    const { data, error } = await supabase
+      .from('rooms')
+      .insert({ code, host_profile_id: user?.is_anonymous ? null : user?.id, game_id: gameId, theme_id: themeId, settings })
+      .select()
+      .single();
+    if (!error) return data;
+    if (error.code !== '23505') throw error;
+  }
+  throw new Error('Não foi possível gerar um código de sala único. Tente novamente.');
+}
+
+async function joinRoom(code, nickname, avatarEmoji = '🎮') {
+  const session = await ensureSession();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: room, error: roomError } = await supabase
+    .from('rooms').select('*').eq('code', code.toUpperCase()).single();
+  if (roomError || !room) throw new Error('Sala não encontrada. Confira o código.');
+  if (room.status !== 'lobby') throw new Error('Essa sala já começou ou terminou.');
+
+  const { data: player, error: playerError } = await supabase
+    .from('room_players')
+    .insert({ room_id: room.id, profile_id: user?.is_anonymous ? null : user?.id, session_uid: session.user.id, nickname, avatar_emoji: avatarEmoji })
+    .select().single();
+  if (playerError) throw playerError;
+  return { room, player };
+}
+
+function subscribeToRoom(roomId, { onPlayersChange, onRoomChange }) {
+  const channel = supabase.channel(`room:${roomId}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'room_players', filter: `room_id=eq.${roomId}` }, onPlayersChange)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, onRoomChange)
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+}
+
+// ============================================================
+// STOP — lógica do jogo
+// ============================================================
+const LETRAS_DISPONIVEIS = 'ABCDEFGHIJLMNOPQRSTUV'.split('');
+const CATEGORIAS_PADRAO = ['Nome', 'Cidade', 'Animal', 'Fruta/Verdura', 'Cor', 'Objeto', 'Profissão', 'Filme/Série'];
+
+function sortearLetra() {
+  return LETRAS_DISPONIVEIS[Math.floor(Math.random() * LETRAS_DISPONIVEIS.length)];
+}
+
+async function montarCategorias(themeId) {
+  if (!themeId) return CATEGORIAS_PADRAO;
+  const { data, error } = await supabase.from('themes').select('label, game_ids').eq('id', themeId).contains('game_ids', ['stop']).single();
+  if (error || !data) return CATEGORIAS_PADRAO;
+  return [...CATEGORIAS_PADRAO.slice(0, 6), data.label];
+}
+
+async function startStopRound(roomId, roundNumber, themeId = null) {
+  const categorias = await montarCategorias(themeId);
+  const letra = sortearLetra();
+  const { data, error } = await supabase
+    .from('stop_rounds')
+    .insert({ room_id: roomId, round_number: roundNumber, letter: letra, categories: categorias, started_at: new Date().toISOString() })
+    .select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function pressStop(roundId, playerId) {
+  const { data, error } = await supabase
+    .from('stop_rounds')
+    .update({ stopped_by: playerId, stopped_at: new Date().toISOString() })
+    .eq('id', roundId).is('stopped_at', null)
+    .select().single();
+  if (error) throw error;
+  if (!data) throw new Error('Alguém já apertou Stop antes de você.');
+  return data;
+}
+
+async function submitAnswer(roundId, playerId, category, answer) {
+  const { data, error } = await supabase
+    .from('stop_answers')
+    .upsert({ round_id: roundId, player_id: playerId, category, answer }, { onConflict: 'round_id,player_id,category' })
+    .select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function getRoundAnswers(roundId) {
+  const { data, error } = await supabase.from('stop_answers').select('*, room_players(nickname, avatar_emoji)').eq('round_id', roundId);
+  if (error) throw error;
+  return data;
+}
+
+async function voteAnswer(answerId, valido) {
+  const campo = valido ? 'votes_valid' : 'votes_invalid';
+  const { data: atual, error: fetchError } = await supabase.from('stop_answers').select(campo).eq('id', answerId).single();
+  if (fetchError) throw fetchError;
+  const { error } = await supabase.from('stop_answers').update({ [campo]: (atual[campo] || 0) + 1 }).eq('id', answerId);
+  if (error) throw error;
+}
+
+async function finalizeVoting(answerId) {
+  const { data: answer, error: fetchError } = await supabase.from('stop_answers').select('votes_valid, votes_invalid').eq('id', answerId).single();
+  if (fetchError) throw fetchError;
+  const isValid = answer.votes_valid > answer.votes_invalid;
+  const { error } = await supabase.from('stop_answers').update({ is_valid: isValid }).eq('id', answerId);
+  if (error) throw error;
+  return isValid;
+}
+
+function calcularPontuacao(respostas) {
+  const porCategoria = {};
+  respostas.forEach((r) => { (porCategoria[r.category] ||= []).push(r); });
+  const pontosPorJogador = {};
+  Object.values(porCategoria).forEach((grupo) => {
+    const validas = grupo.filter((r) => r.is_valid && r.answer?.trim());
+    const contagem = {};
+    validas.forEach((r) => { const c = r.answer.trim().toLowerCase(); contagem[c] = (contagem[c] || 0) + 1; });
+    validas.forEach((r) => {
+      const c = r.answer.trim().toLowerCase();
+      const pontos = contagem[c] === 1 ? 10 : 5;
+      pontosPorJogador[r.player_id] = (pontosPorJogador[r.player_id] || 0) + pontos;
+    });
+  });
+  return pontosPorJogador;
+}
+
+// ============================================================
+// UI — TELA ENTRADA
+// ============================================================
+function mostrarErro(elId, msg) { const el = $(elId); el.textContent = msg; el.hidden = false; }
+function esconderErro(elId) { $(elId).hidden = true; }
+
+$('btn-entrar-sala').addEventListener('click', async () => {
+  esconderErro('erro-entrar-sala');
+  const codigo = $('input-codigo-sala').value.trim();
+  const nickname = $('input-nickname').value.trim();
+  if (!codigo || !nickname) { mostrarErro('erro-entrar-sala', 'Preenche o código e o apelido.'); return; }
+
+  try {
+    const { room, player } = await joinRoom(codigo, nickname);
+    state.room = room; state.player = player;
+    abrirLobby();
+  } catch (err) {
+    mostrarErro('erro-entrar-sala', err.message);
+  }
+});
+
+$('btn-criar-sala').addEventListener('click', async () => {
+  esconderErro('erro-criar-sala');
+  const nickname = $('input-nickname-host').value.trim();
+  if (!nickname) { mostrarErro('erro-criar-sala', 'Preenche seu apelido.'); return; }
+
+  try {
+    const room = await createRoom({ gameId: 'stop' });
+    const session = await ensureSession();
+    const { data: player, error } = await supabase
+      .from('room_players')
+      .insert({ room_id: room.id, session_uid: session.user.id, nickname, avatar_emoji: '👑' })
+      .select().single();
+    if (error) throw error;
+
+    state.room = room; state.player = player;
+    abrirLobby();
+  } catch (err) {
+    mostrarErro('erro-criar-sala', err.message);
+  }
+});
+
+$('btn-abrir-login').addEventListener('click', () => irPara('tela-login'));
+$('btn-ir-cadastro').addEventListener('click', () => irPara('tela-cadastro'));
+$('btn-voltar-entrada-1').addEventListener('click', () => irPara('tela-entrada'));
+$('btn-voltar-entrada-2').addEventListener('click', () => irPara('tela-entrada'));
+
+$('btn-fazer-login').addEventListener('click', async () => {
+  esconderErro('erro-login');
+  try {
+    await signIn($('login-email').value.trim(), $('login-senha').value);
+    irPara('tela-entrada');
+  } catch (err) {
+    mostrarErro('erro-login', 'E-mail ou senha incorretos.');
+  }
+});
+
+$('btn-fazer-cadastro').addEventListener('click', async () => {
+  esconderErro('erro-cadastro');
+  const nickname = $('cadastro-nickname').value.trim();
+  const email = $('cadastro-email').value.trim();
+  const senha = $('cadastro-senha').value;
+  if (!nickname || !email || senha.length < 6) {
+    mostrarErro('erro-cadastro', 'Preenche apelido, e-mail e senha (mín. 6 caracteres).');
+    return;
+  }
+  try {
+    await signUp(email, senha, nickname);
+    irPara('tela-entrada');
+  } catch (err) {
+    mostrarErro('erro-cadastro', err.message);
+  }
+});
+
+// ============================================================
+// UI — TELA LOBBY
+// ============================================================
+let unsubscribeLobby = null;
+
+async function abrirLobby() {
+  irPara('tela-lobby');
+  $('lobby-codigo').textContent = state.room.code;
+
+  const { data: { user } } = await supabase.auth.getUser();
+  const souHost = state.room.host_profile_id ? state.room.host_profile_id === user.id : true;
+
+  $('btn-iniciar-jogo').hidden = !souHost;
+  $('lobby-esperando').hidden = souHost;
+
+  renderizarJogadores(await buscarJogadores(state.room.id));
+
+  if (unsubscribeLobby) unsubscribeLobby();
+  unsubscribeLobby = subscribeToRoom(state.room.id, {
+    onPlayersChange: async () => renderizarJogadores(await buscarJogadores(state.room.id)),
+    onRoomChange: (payload) => {
+      if (payload.new.status === 'playing') abrirStop();
+    }
+  });
+
+  $('btn-iniciar-jogo').onclick = async () => {
+    try {
+      await iniciarJogo();
+    } catch (err) {
+      mostrarErroLobby(err.message);
+    }
+  };
+}
+
+async function buscarJogadores(roomId) {
+  const { data, error } = await supabase.from('room_players').select('*').eq('room_id', roomId).order('joined_at', { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
+function renderizarJogadores(jogadores) {
+  const lista = $('lobby-jogadores');
+  lista.innerHTML = '';
+  jogadores.forEach((j) => {
+    const li = document.createElement('li');
+    li.textContent = `${j.avatar_emoji} ${j.nickname}${j.is_connected ? '' : ' (desconectado)'}`;
+    lista.appendChild(li);
+  });
+  if (jogadores.length < 2) mostrarErroLobby('Precisa de pelo menos 2 jogadores pra começar.');
+  else esconderErroLobby();
+}
+
+async function iniciarJogo() {
+  const jogadores = await buscarJogadores(state.room.id);
+  if (jogadores.length < 2) throw new Error('Precisa de pelo menos 2 jogadores pra começar.');
+
+  const { error } = await supabase.from('rooms').update({ status: 'playing' }).eq('id', state.room.id);
+  if (error) throw error;
+
+  const round = await startStopRound(state.room.id, 1, state.room.theme_id);
+  state.round = round;
+  // onRoomChange (Realtime) cuida de levar os outros jogadores pro Stop;
+  // o host navega direto aqui pra não esperar o próprio evento voltar.
+  abrirStop();
+}
+
+function mostrarErroLobby(msg) {
+  const el = $('erro-lobby');
+  el.textContent = msg; el.hidden = false;
+  $('btn-iniciar-jogo').disabled = true;
+}
+function esconderErroLobby() {
+  $('erro-lobby').hidden = true;
+  $('btn-iniciar-jogo').disabled = false;
+}
+
+// ============================================================
+// UI — TELA STOP
+// ============================================================
+let timerInterval;
+let unsubscribeStop = null;
+
+async function abrirStop() {
+  // se não é o host, ainda não tem state.round — busca a rodada ativa da sala
+  if (!state.round) {
+    const { data, error } = await supabase
+      .from('stop_rounds').select('*').eq('room_id', state.room.id)
+      .order('round_number', { ascending: false }).limit(1).single();
+    if (error) { console.error(error); return; }
+    state.round = data;
+  }
+
+  irPara('tela-stop');
+  $('stop-letra').textContent = state.round.letter;
+  $('btn-stop').disabled = false;
+  $('stop-votacao').hidden = true;
+  $('stop-resultado').hidden = true;
+  renderizarCategorias(state.round.categories);
+  iniciarTimer(state.round.started_at);
+
+  $('btn-stop').onclick = async () => {
+    try {
+      await pressStop(state.round.id, state.player.id);
+      $('btn-stop').disabled = true;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  if (unsubscribeStop) unsubscribeStop();
+  const channel = supabase.channel(`stop_round:${state.round.id}`)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'stop_rounds', filter: `id=eq.${state.round.id}` }, (payload) => {
+      if (payload.new.stopped_at) encerrarRodada();
+    })
+    .subscribe();
+  unsubscribeStop = () => supabase.removeChannel(channel);
+}
+
+function renderizarCategorias(categorias) {
+  const container = $('stop-categorias');
+  container.innerHTML = '';
+  categorias.forEach((cat) => {
+    const div = document.createElement('div');
+    div.className = 'stop-categoria';
+    div.innerHTML = `<label>${cat}</label><input type="text" data-categoria="${cat}" maxlength="40" />`;
+    const input = div.querySelector('input');
+    let debounceTimer;
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        submitAnswer(state.round.id, state.player.id, cat, input.value).catch(console.error);
+      }, 400);
+    });
+    container.appendChild(div);
+  });
+}
+
+function iniciarTimer(startedAtIso) {
+  clearInterval(timerInterval);
+  const inicio = new Date(startedAtIso).getTime();
+  const fim = inicio + 60_000;
+
+  timerInterval = setInterval(() => {
+    const restanteMs = fim - Date.now();
+    const restanteS = Math.max(0, Math.ceil(restanteMs / 1000));
+    $('stop-timer').textContent = `${restanteS}s`;
+    if (restanteMs <= 0) {
+      clearInterval(timerInterval);
+      pressStop(state.round.id, state.player.id).catch(() => {});
+    }
+  }, 250);
+}
+
+async function encerrarRodada() {
+  clearInterval(timerInterval);
+  $('btn-stop').disabled = true;
+  const respostas = await getRoundAnswers(state.round.id);
+  mostrarVotacao(respostas);
+}
+
+function mostrarVotacao(respostas) {
+  $('stop-votacao').hidden = false;
+  const container = $('stop-votacao-lista');
+  container.innerHTML = '';
+
+  respostas.filter((r) => r.player_id !== state.player.id).forEach((r) => {
+    const div = document.createElement('div');
+    div.className = 'stop-voto-item';
+    div.innerHTML = `
+      <span>${r.category}: <b>${r.answer || '(em branco)'}</b> — ${r.room_players?.nickname || '?'}</span>
+      <button data-answer-id="${r.id}" data-valido="true">✅</button>
+      <button data-answer-id="${r.id}" data-valido="false">❌</button>
+    `;
+    container.appendChild(div);
+  });
+
+  container.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      await voteAnswer(btn.dataset.answerId, btn.dataset.valido === 'true');
+      btn.parentElement.style.opacity = '0.5';
+      btn.parentElement.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    });
+  });
+
+  $('btn-finalizar-votacao').onclick = async () => {
+    for (const r of respostas) {
+      if (r.player_id !== state.player.id) await finalizeVoting(r.id);
+    }
+    const pontos = calcularPontuacao(respostas);
+    mostrarResultado(pontos, respostas);
+  };
+}
+
+function mostrarResultado(pontos, respostas) {
+  $('stop-votacao').hidden = true;
+  $('stop-resultado').hidden = false;
+
+  const lista = $('stop-placar');
+  lista.innerHTML = '';
+  const nomesPorJogador = {};
+  respostas.forEach((r) => { nomesPorJogador[r.player_id] = r.room_players?.nickname || '?'; });
+
+  Object.entries(pontos).sort((a, b) => b[1] - a[1]).forEach(([playerId, p]) => {
+    const li = document.createElement('li');
+    li.textContent = `${nomesPorJogador[playerId] || playerId}: ${p} pontos`;
+    lista.appendChild(li);
+  });
+
+  $('btn-proxima-rodada').onclick = async () => {
+    const proximoNumero = state.round.round_number + 1;
+    const novaRodada = await startStopRound(state.room.id, proximoNumero, state.room.theme_id);
+    state.round = novaRodada;
+    await supabase.from('rooms').update({ status: 'playing' }).eq('id', state.room.id);
+    abrirStop();
+  };
+
+  $('btn-sair-sala').onclick = () => {
+    if (unsubscribeLobby) unsubscribeLobby();
+    if (unsubscribeStop) unsubscribeStop();
+    state.room = null; state.player = null; state.round = null;
+    irPara('tela-entrada');
+  };
+}
+</script>
+</body>
+</html>
