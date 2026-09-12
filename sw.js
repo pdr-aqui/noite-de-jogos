@@ -1,7 +1,7 @@
 /* Noite de Jogos — service worker
    Aumente a versão abaixo sempre que publicar uma mudança (inclusive nos
    arquivos de /data) para forçar os celulares a baixarem a versão nova. */
-const CACHE = 'noite-jogos-v13';
+const CACHE = 'noite-jogos-v14';
 const ASSETS = [
   './',
   './index.html',
@@ -21,6 +21,7 @@ const ASSETS = [
   './data/escala-oculta.txt',
   './data/historia-em-turnos.txt',
   './data/mais-provavel.txt',
+  './data/mimica.txt',
   './data/momentos-quentes.txt',
   './data/palavra-proibida.csv',
   './data/pares-perguntas.csv',

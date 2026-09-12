@@ -185,6 +185,7 @@
    Ver README.md.
 ========================================================= */
 const THEME_KEYS=['geral','anime','filmes','animais','comidas','futebol','lugares','profissoes','objetos','games','herois','marcas','musica','desenhos'];
+let MIMICA=[];
 let THEMES={}, QPAIRS=[], SCALE_PROMPTS=[], BOTAO=[], OPINIOES=[], INUTIL=[], PERSONAGENS=[], ENTREVISTA_Q=[], HIST_WORDS=[], MAIS_PROVAVEL=[], VERDADES_HINT=[], QUEMDISSE=[], TABOO=[], SILENCIOSAS=[], QUENTES=[];
 
 async function readText(path){
@@ -196,11 +197,12 @@ const readList=p=>readText(p);
 const readCsv=async p=>(await readText(p)).slice(1).map(l=>l.split(';').map(c=>c.trim()));
 
 async function loadData(){
-  const [temas,pares,taboo,regras,...listas]=await Promise.all([
+  const [temas,pares,taboo,regras,mimica,...listas]=await Promise.all([
     Promise.all(THEME_KEYS.map(k=>readText('temas/'+k+'.txt'))),
     readCsv('pares-perguntas.csv'),
     readCsv('palavra-proibida.csv'),
     readCsv('adivinhe-a-regra.csv'),
+    readList('mimica.txt'),
     readList('escala-oculta.txt'), readList('dilema-do-botao.txt'), readList('concorda-ou-discorda.txt'),
     readList('debate-inutil.txt'), readList('personagens.txt'), readList('entrevista-invertida.txt'),
     readList('historia-em-turnos.txt'), readList('mais-provavel.txt'), readList('duas-verdades-dicas.txt'),
@@ -213,6 +215,7 @@ async function loadData(){
   });
   QPAIRS=pares.filter(p=>p.length>=2).map(p=>[p[0],p[1]]);
   const gReg=GAMES.find(g=>g.id==='adivinhe'); if(gReg) gReg.variants=regras.filter(r=>r.length>=3).map(r=>({name:r[0],prompt:r[1],secret:r[2]}));
+  MIMICA=mimica;
   TABOO=taboo.filter(t=>t.length>=2).map(t=>({word:t[0],taboo:t.slice(1).filter(Boolean)}));
   [SCALE_PROMPTS,BOTAO,OPINIOES,INUTIL,PERSONAGENS,ENTREVISTA_Q,HIST_WORDS,MAIS_PROVAVEL,VERDADES_HINT,QUEMDISSE,SILENCIOSAS,QUENTES]=listas;
 }
@@ -255,6 +258,9 @@ const GAMES = [
   {id:'entrevista', fam:'perf', emoji:'🎤', name:'Entrevista Invertida', min:3, max:14,
    desc:'Um responde como um personagem secreto. O grupo entrevista.',
    rules:'Um jogador é sorteado e recebe um personagem secreto (só ele vê). O resto do grupo faz perguntas — o celular sugere algumas — e o entrevistado responde SEM sair do personagem. Se quebrar o personagem, perde; se for convincente e engraçado, pontua. A cada rodada um novo jogador entra no banco dos entrevistados.'},
+  {id:'mimica', fam:'perf', emoji:'🎭', name:'Mímica', min:3, max:16,
+   desc:'Um ou dois mímicos, 5 palavras, 2 minutos. Ponto por palavra e bônus por fechar a lista.',
+   rules:'O celular sorteia quem vai mimar (1 pessoa até 5 jogadores; 2 pessoas a partir de 6). Só os mímicos veem a lista de 5 palavras. Sem falar, sem apontar pra objetos, sem soletrar. A plateia grita palpites. Cada palavra acertada vale +1 pra TODOS na sala; se fecharem as 5 antes do tempo, +2 de bônus pra todos. Quando são dois mímicos, eles decidem entre si como fazer: os dois juntos na mesma palavra, revezando a cada palavra, ou dividindo a lista. Vale tudo, desde que combinem antes.'},
   {id:'historia', fam:'perf', emoji:'🧩', name:'História em Turnos', min:2, max:99,
    desc:'Criem uma história juntos. Cada turno vem com uma palavra obrigatória.',
    rules:'O grupo monta uma história, um de cada vez. A cada turno o celular dá uma PALAVRA OBRIGATÓRIA que precisa entrar na frase (natural ou zoada) — e a frase tem que dar continuidade ao que veio antes. Você tem ~15s; travou ou ignorou a palavra, perde a vez. Quanto mais inesperada a entrada da palavra, melhor. Joguem umas 2 voltas e encerrem.'},
@@ -428,6 +434,7 @@ function buildRound(){
   else if(g.id==='verdades'){ r.teller=rnd(n); r.liePos=1+rnd(3); r.hint=pickNoRepeat(VERDADES_HINT,'vh'); }
   else if(g.id==='quemdisse'){ r.prompt=pickNoRepeat(QUEMDISSE,'qd'); r.answers=[]; r.collectIdx=0; }
   else if(g.id==='proibida'){ r.clueGiver=rnd(n); r.taboo=pickNoRepeat(TABOO,'taboo'); }
+  else if(g.id==='mimica'){ mimicaSetup(r); }
   else if(g.id==='silenciosas'){ r.prompt=pickNoRepeat(SILENCIOSAS,'sil'); }
   else if(g.id==='quentes'){ r.prompt=pickNoRepeat(QUENTES,'qt'); }
   S.round=r;
@@ -901,6 +908,91 @@ function viewProibidaReveal(){
   </div>`;
 }
 
+/* ----- MÍMICA ----- */
+const MIM_TIME=120, MIM_WORDS=5, MIM_BONUS=2;
+function mimicaSetup(r){
+  r=r||S.round; const n=S.players.length;
+  const nMimes=n>=6?2:1;
+  r.mimes=shuffle(S.players.map((_,i)=>i)).slice(0,nMimes);
+  if(!S.mimUsed)S.mimUsed=[];
+  let pool=MIMICA.filter(w=>!S.mimUsed.includes(w));
+  if(pool.length<MIM_WORDS){S.mimUsed=[];pool=MIMICA;}
+  r.words=shuffle(pool).slice(0,MIM_WORDS);
+  S.mimUsed.push(...r.words);
+  r.done=r.words.map(()=>false); r.cur=0; r.queue=r.words.map((_,i)=>i);
+  r.timeLeft=MIM_TIME; r.endAt=null; r.paused=false; r.finished=false; r.shown=false;
+}
+function mimeNames(){return S.round.mimes.map(i=>S.players[i].name);}
+function viewMimicaReveal(){
+  const r=S.round, names=mimeNames();
+  const two=names.length===2;
+  const wordsHtml=r.words.map((w,i)=>`<div style="display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:17px;font-weight:700"><span class="muted" style="font-weight:600;min-width:20px">${i+1}.</span>${esc(w)}</div>`).join('');
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">${two?'Quem vai mimar':'Quem vai mimar'}</div>
+    <h1 style="font-size:clamp(26px,9vw,34px)">${names.map(esc).join(' <span class="muted" style="font-size:.6em">e</span> ')}</h1>
+    <p class="muted" style="font-size:13.5px">Só ${two?'os dois':esc(names[0])} pode${two?'m':''} ver a lista. O resto da sala olha pra outro lado.</p>
+    ${two?`<div class="note" style="margin-top:10px;text-align:left"><b style="color:var(--text)">Vocês dois decidem como fazer.</b> Juntos na mesma palavra, revezando a cada palavra, ou cada um pega metade da lista. Combinem antes de começar. Não tem regra: só não podem falar.</div>`:''}
+    ${r.shown
+      ? `<div class="card" style="margin-top:12px;text-align:left;border-left:3px solid var(--gold)"><div class="kicker" style="color:var(--gold);margin-bottom:6px">As 5 palavras</div>${wordsHtml}
+           <p class="muted" style="font-size:12.5px;margin-top:10px">Pode fazer em qualquer ordem. Durante o jogo o celular fica com ${two?'vocês':'você'}, mostrando uma por vez.</p></div>
+         <div class="spacer"></div>
+         <button class="btn btn-lime btn-lg" data-action="mimStart">Começar · ${fmt(MIM_TIME)} ⏱</button>`
+      : `<div class="reveal-card hidden" id="rcard" data-action="mimShow"><div class="big-emoji">🎭</div><div style="margin-top:10px;font-weight:700">Toque para ver as palavras</div></div>
+         <button class="btn btn-ghost btn-sm" data-action="mimReroll">🎲 Sortear outro${two?'s':''}</button>`}
+  </div>`;
+}
+function viewMimicaPlay(){
+  const r=S.round, left=r.timeLeft, idx=r.queue[r.cur], nDone=r.done.filter(Boolean).length;
+  const w=r.words[idx];
+  return `${bar()}<div class="screen center">
+    <div class="kicker" style="margin-top:8px">Mímica · ${nDone}/${MIM_WORDS} acertadas</div>
+    <div class="timer-wrap"><div class="timer ${left<=15&&left>0?'warn':''}" id="timer">${fmt(left)}</div></div>
+    <div class="card" style="width:100%;margin:6px 0 10px;border-left:3px solid var(--gold)">
+      <div class="kicker" style="color:var(--gold)">Palavra ${idx+1}</div>
+      <div style="font-size:clamp(26px,9vw,36px);font-weight:800;line-height:1.15;margin-top:6px">${esc(w)}</div>
+    </div>
+    <div class="row" style="gap:9px;width:100%">
+      <button class="btn btn-lime grow btn-lg" data-action="mimHit">Acertaram ✓</button>
+    </div>
+    <div class="row" style="gap:9px;width:100%;margin-top:9px">
+      <button class="btn btn-ghost grow" data-action="mimSkip">Pular →</button>
+      <button class="btn btn-ghost grow" data-action="mimPause" id="ttg">${r.paused?'▶ Continuar':'⏸ Pausar'}</button>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin-top:10px">Pular manda a palavra pro fim da fila. Dá pra voltar nela se sobrar tempo.</p>
+    <div class="spacer"></div>
+    <button class="btn btn-red" data-action="mimEnd">Encerrar agora →</button>
+  </div>`;
+}
+function mimTick(){
+  clearInterval(timerInt); requestWake();
+  timerInt=setInterval(()=>{
+    if(S.screen!=='mimicaPlay'){clearInterval(timerInt);releaseWake();return;}
+    if(S.round.paused)return;
+    const left=Math.max(0,Math.ceil((S.round.endAt-Date.now())/1000));
+    S.round.timeLeft=left;
+    const el=$('#timer'); if(el){el.textContent=fmt(left);el.classList.toggle('warn',left<=15&&left>0);}
+    if(left<=0){clearInterval(timerInt);releaseWake();if(navigator.vibrate)navigator.vibrate([200,100,200]);beep();mimFinish();}
+  },250);
+}
+function mimFinish(){const r=S.round;r.finished=true;r.paused=true;clearInterval(timerInt);releaseWake();go('mimicaResult');}
+function viewMimicaResult(){
+  const r=S.round, nDone=r.done.filter(Boolean).length, all=nDone===MIM_WORDS;
+  const rows=r.words.map((w,i)=>`<button class="btn ${r.done[i]?'btn-lime':'btn-ghost'}" data-action="mimToggle:${i}" style="width:100%;margin-bottom:8px;text-align:left;display:flex;justify-content:space-between"><span>${esc(w)}</span><span>${r.done[i]?'✓ acertou':'✕ não'}</span></button>`).join('');
+  return `${bar()}<div class="screen">
+    <div class="center" style="margin:8px 0"><div class="big-emoji">${all?'🏆':'⏱'}</div></div>
+    <h1 class="center" style="font-size:clamp(22px,7vw,28px)">${all?'Fecharam a lista!':'Acabou o tempo'}</h1>
+    <p class="muted center" style="font-size:13.5px;margin:6px 0 14px">${mimeNames().map(esc).join(' e ')} confere${r.mimes.length>1?'m':''}: toque pra corrigir o que a plateia acertou de verdade.</p>
+    ${rows}
+    <div class="card" style="margin-top:8px">
+      <div style="display:flex;justify-content:space-between;font-size:15px"><span>Palavras acertadas</span><b>${nDone} × +1</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;margin-top:6px;${all?'':'opacity:.45'}"><span>Bônus por fechar as 5</span><b>${all?'+'+MIM_BONUS:'—'}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><span>Todos na sala ganham</span><b style="color:var(--lime)">+${nDone+(all?MIM_BONUS:0)}</b></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="mimAward">Distribuir pontos →</button>
+  </div>`;
+}
+
 /* ----- VERDADES SILENCIOSAS ----- */
 function viewSilenciosas(){
   const r=S.round;
@@ -1326,6 +1418,9 @@ function render(){
     case 'quemdisseVote':html=viewQuemdisseVote();break;
     case 'quemdisseResult':html=viewQuemdisseResult();break;
     case 'proibidaReveal':html=viewProibidaReveal();break;
+    case 'mimicaReveal':html=viewMimicaReveal();break;
+    case 'mimicaPlay':html=viewMimicaPlay();break;
+    case 'mimicaResult':html=viewMimicaResult();break;
     case 'silenciosas':html=viewSilenciosas();break;
     case 'silenciosasResolve':html=viewSilenciosasResolve();break;
     case 'quentes':html=viewQuentes();break;
@@ -1347,6 +1442,7 @@ function render(){
   app.innerHTML=html;
   document.body.classList.toggle('has-footer', ['home','intro','champion','scoreboard','players','config'].includes(S.screen));
   if(S.screen==='discuss')tickStart();
+  if(S.screen==='mimicaPlay'&&S.round&&!S.round.paused&&!S.round.finished)mimTick();
   if(S.screen==='histTurn')histTickStart();
   if(S.screen==='players'){const inp=$('#pname');if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')addPlayer();};}}
   if(S.screen==='quemdisseCollect'){const inp=$('#qans');if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')quemdisseSubmit();};}}
@@ -1388,6 +1484,7 @@ function routeRoundStart(){
   else if(g.id==='verdades')go('verdadesReveal');
   else if(g.id==='quemdisse')go('quemdisseCollect');
   else if(g.id==='proibida')go('proibidaReveal');
+  else if(g.id==='mimica')go('mimicaReveal');
   else if(g.id==='silenciosas')go('silenciosas');
   else if(g.id==='quentes')go('quentes');
   else if(g.fam==='imp'||g.id==='escala')go('reveal');
@@ -1729,6 +1826,15 @@ document.addEventListener('click',(e)=>{
     case a==='newOrKeep':resetNight();go(S.players.length>=2?'play':'players');break;
     case a==='addP':addPlayer();break;
     case a==='addCW':addCustom();break;
+    case a==='mimShow':S.round.shown=true;render();break;
+    case a==='mimReroll':mimicaSetup();render();break;
+    case a==='mimStart':{const r=S.round;r.endAt=Date.now()+MIM_TIME*1000;r.paused=false;go('mimicaPlay');break;}
+    case a==='mimHit':{const r=S.round;r.done[r.queue[r.cur]]=true;r.queue.splice(r.cur,1);if(!r.queue.length){mimFinish();break;}if(r.cur>=r.queue.length)r.cur=0;render();break;}
+    case a==='mimSkip':{const r=S.round;if(r.queue.length>1){r.cur=(r.cur+1)%r.queue.length;}render();break;}
+    case a==='mimPause':{const r=S.round;if(!r.paused){r.paused=true;r.timeLeft=Math.max(0,Math.ceil((r.endAt-Date.now())/1000));releaseWake();}else{r.paused=false;r.endAt=Date.now()+r.timeLeft*1000;requestWake();}render();break;}
+    case a==='mimEnd':mimFinish();break;
+    case a&&a.startsWith('mimToggle:'):{const i=+a.split(':')[1];S.round.done[i]=!S.round.done[i];render();break;}
+    case a==='mimAward':{const r=S.round;const nDone=r.done.filter(Boolean).length;const pts=nDone+(nDone===MIM_WORDS?MIM_BONUS:0);if(pts>0)award(S.players.map((_,i)=>i),pts);nextRoundOrEnd();break;}
     case a==='impHintOn':S.impHint=true;save();render();break;
     case a==='impHintOff':S.impHint=false;save();render();break;
     case a==='sortear':{
@@ -1911,7 +2017,7 @@ document.addEventListener('click',(e)=>{
 });
 
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'&&S.screen==='discuss'&&S.round&&!S.round.paused)requestWake();
+  if(document.visibilityState==='visible'&&(S.screen==='discuss'||S.screen==='mimicaPlay')&&S.round&&!S.round.paused)requestWake();
 });
 
 function confetti(){

@@ -36,6 +36,7 @@ arquivos. Não precisa mexer no `index.html`.
 | `data/quem-disse-isso.txt` | Quem Disse Isso? | uma frase por linha |
 | `data/verdades-silenciosas.txt` | Verdades Silenciosas | uma pergunta por linha |
 | `data/momentos-quentes.txt` | Momentos Quentes | uma pergunta por linha |
+| `data/mimica.txt` | Mímica | uma palavra ou ação por linha (tem que dar pra fazer com o corpo) |
 
 ## Dica pro impostor
 
@@ -61,7 +62,7 @@ Sem isso, celulares que já instalaram o app continuam com a versão antiga em c
 ## Estrutura
 
 ```
-index.html            app inteiro (telas, regras dos 19 jogos, lógica)
+index.html            app inteiro (telas, regras dos 20 jogos, lógica)
 data/                 conteúdo dos jogos (texto)
 sw.js                 cache offline (PWA)
 manifest.webmanifest  nome, ícones e cores do app instalado
