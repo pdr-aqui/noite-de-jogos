@@ -1,0 +1,51 @@
+Lugares 🌍
+Praia;areia
+Disney;fila
+Paris;torre
+Amazônia;úmido
+Saara;areia
+Tóquio;néon
+Cristo Redentor;alto
+Lua;cinza
+Iguaçu;água
+Times Square;luzes
+Machu Picchu;pedras
+Polo Norte;gelo
+Veneza;água
+Pirâmides;areia
+Cinema;escuro
+Shopping;ar-condicionado
+Hospital;cheiro
+Aeroporto;espera
+Escola;sino
+Academia;espelho
+Igreja;banco
+Estádio;grito
+Museu;silêncio
+Biblioteca;silêncio
+Cemitério;silêncio
+Caverna;escuro
+Floresta;sombra
+Deserto;seco
+Geleira;gelo
+Vulcão;quente
+Cataratas;água
+Favela;escada
+Metrô;subterrâneo
+Rodoviária;espera
+Posto de gasolina;cheiro
+Praça;banco
+Parque;grama
+Zoológico;grade
+Aquário;vidro
+Hotel;chave
+Pousada;café da manhã
+Camping;barraca
+Fazenda;cerca
+Sítio;cerca
+Ilha;água ao redor
+Pântano;úmido
+Mansão;portão
+Castelo;pedras
+Farol;alto
+Mirante;alto

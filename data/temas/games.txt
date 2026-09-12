@@ -1,0 +1,51 @@
+Games 🎮
+Mario;bigode
+Luigi;verde
+Sonic;azul
+Link;verde
+Zelda;loira
+Kratos;careca
+Master Chief;capacete
+Lara Croft;trança
+Pac-Man;amarelo
+Donkey Kong;gravata
+Yoshi;língua
+Bowser;casco
+Pikachu;amarelo
+Crash;laranja
+Spyro;roxo
+Cloud;loiro
+Sephiroth;cabelo comprido
+Geralt;cabelo branco
+Ezio;capuz
+Nathan Drake;cinto
+Steve (Minecraft);quadrado
+Creeper;verde
+Herobrine;olhos brancos
+Aloy;ruiva
+Joel;barba
+Ellie;canivete
+Arthur Morgan;chapéu
+Trevor;careca
+CJ;bicicleta
+Gordon Freeman;óculos
+Doom Slayer;verde
+Ryu;faixa
+Ken;loiro
+Chun-Li;coques
+Scorpion;amarelo
+Sub-Zero;azul
+Pyramid Head;metal
+Leon Kennedy;franja
+Jill;boina
+Nemesis;casaco
+Solid Snake;bandana
+Big Boss;tapa-olho
+Samus;laranja
+Kirby;rosa
+Mega Man;azul
+Ganondorf;ruivo
+Toad;cogumelo
+Waluigi;roxo
+Tails;laranja
+Knuckles;vermelho

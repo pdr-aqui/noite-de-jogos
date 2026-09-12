@@ -1,0 +1,51 @@
+Futebol ⚽
+Pelé;camisa 10
+Messi;canhoto
+Neymar;drible
+Cristiano Ronaldo;salto
+Maradona;canhoto
+Ronaldinho;sorriso
+Mbappé;velocidade
+Zidane;careca
+Garrincha;drible
+Haaland;loiro
+Vini Jr;ponta
+Marta;camisa 10
+Romário;área
+Kaká;elegante
+Casemiro;volante
+Ronaldo Fenômeno;joelho
+Rivaldo;canhoto
+Cafu;lateral
+Roberto Carlos;falta
+Zico;camisa 10
+Sócrates;barba
+Falcão;elegante
+Beckham;cruzamento
+Iniesta;passe
+Xavi;passe
+Ronaldinho Gaúcho;sorriso
+Suárez;dentes
+Lewandowski;área
+Modric;passe
+Kroos;passe
+Salah;barba
+De Bruyne;ruivo
+Mané;velocidade
+Benzema;área
+Pirlo;barba
+Buffon;luvas
+Casillas;luvas
+Neuer;luvas
+Alisson;luvas
+Ederson;luvas
+Thiago Silva;zaga
+Marcelo;cabelo
+Dani Alves;lateral
+Pogba;cabelo
+Griezmann;comemoração
+Bellingham;jovem
+Vinícius;ponta
+Endrick;jovem
+Pedri;passe
+Gabigol;comemoração

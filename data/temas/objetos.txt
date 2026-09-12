@@ -1,0 +1,51 @@
+Objetos 🧦
+Geladeira;fria
+Controle remoto;pilha
+Guarda-chuva;dobra
+Escova de dente;cerdas
+Carregador;fio
+Travesseiro;macio
+Liquidificador;barulho
+Chinelo;borracha
+Óculos;vidro
+Ventilador;gira
+Carteira;couro
+Fone de ouvido;fio
+Espelho;vidro
+Mochila;zíper
+Tesoura;afiada
+Grampeador;metal
+Régua;reta
+Borracha;apaga
+Lápis;madeira
+Caneta;tampa
+Abridor de latas;metal
+Saca-rolhas;espiral
+Pente;dentes
+Secador;quente
+Aspirador;barulho
+Ferro de passar;quente
+Micro-ondas;apito
+Torradeira;pula
+Cafeteira;quente
+Panela de pressão;apito
+Garrafa térmica;quente
+Chaveiro;pendurado
+Relógio;ponteiros
+Despertador;barulho
+Calculadora;botões
+Estojo;zíper
+Garfo;dentes
+Colher;funda
+Faca;afiada
+Prato;redondo
+Copo;vidro
+Caneca;alça
+Vassoura;cabo
+Rodo;cabo
+Balde;alça
+Esponja;molhada
+Cabide;pendurado
+Almofada;macia
+Cobertor;quente
+Lanterna;pilha

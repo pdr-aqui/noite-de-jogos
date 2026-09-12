@@ -1,0 +1,51 @@
+Super-heróis 🦸
+Superman;capa
+Batman;preto
+Mulher-Maravilha;laço
+Flash;vermelho
+Aquaman;tridente
+Lanterna Verde;anel
+Coringa;roxo
+Bane;máscara
+Robin;jovem
+Homem de Ferro;vermelho
+Capitão América;azul
+Thor;loiro
+Hulk;verde
+Viúva Negra;ruiva
+Gavião Arqueiro;flecha
+Pantera Negra;preto
+Doutor Estranho;capa
+Homem-Aranha;vermelho
+Venom;preto
+Wolverine;costeletas
+Tempestade;cabelo branco
+Ciclope;óculos
+Fênix;ruiva
+Magneto;capacete
+Professor X;careca
+Mística;azul
+Deadpool;vermelho
+Cavaleiro da Lua;branco
+Demolidor;vermelho
+Justiceiro;caveira
+Capitã Marvel;loira
+Vingadores;equipe
+Coisa;laranja
+Tocha Humana;fogo
+Senhor Fantástico;estica
+Mulher Invisível;loira
+Gavião Negro;asas
+Ravena;capuz
+Estelar;laranja
+Ciborgue;metal
+Curinga;roxo
+Arlequina;taco
+Pinguim;cartola
+Charada;verde
+Duas-Caras;moeda
+Espantalho;máscara
+Veneno;preto
+Hera Venenosa;ruiva
+Galactus;gigante
+Thanos;roxo

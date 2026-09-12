@@ -1,0 +1,51 @@
+Geral 🎲
+Praia;areia
+Pizza;redonda
+Médico;jaleco
+Futebol;grama
+Chuva;guarda-chuva
+Aniversário;bolo
+Academia;suor
+Cachorro;pelo
+Trânsito;buzina
+Casamento;aliança
+Show;palco
+Padaria;cheiro bom
+Viagem;mala
+Eleição;urna
+Halloween;abóbora
+Café;quente
+Segunda-feira;preguiça
+Banho frio;arrepio
+Wi-Fi caindo;sinal
+Churrasco;fumaça
+Cinema;pipoca
+Playlist;fone
+Dentista;cadeira
+Mudança;caixas
+Boleto;vencimento
+Reunião;pauta
+Carnaval;confete
+Feira;barraca
+Resfriado;lenço
+Spoiler;final
+Selfie;braço esticado
+Fila do banco;senha
+Brinde;taça
+Aposentadoria;descanso
+Picanha;sal grosso
+Maratona de série;sofá
+Vizinho barulhento;parede
+Pix;celular
+Plano de saúde;carteirinha
+Apagão;vela
+Festa surpresa;silêncio
+Trote;susto
+Domingo à noite;ansiedade
+Hora do almoço;fome
+Despertador;soneca
+Trovoada;estrondo
+Final de campeonato;taça
+Pegadinha;risada
+Reembolso;recibo
+Crush;coração acelerado

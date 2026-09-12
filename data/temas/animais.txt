@@ -1,0 +1,144 @@
+Animais 🦁
+Leopardo;pintas
+Hiena;risada
+Búfalo;chifres
+Anta;focinho
+Alce;galhada
+Cervo;galhada
+Rena;neve
+Texugo;listras
+Doninha;comprida
+Doninha-anã;pequenina
+Marta;pelagem
+Vison;pelagem
+Furão;comprido
+Guaxinim;máscara
+Texugo-do-mel;destemido
+Tatu;casco
+Porco-espinho;espinhos
+Diabo-da-tasmânia;ilha
+Coiote;uivo
+Chacal;deserto
+Pantera;escura
+Lince;orelhas
+Caracal;orelhas
+Serval;pernas longas
+Okapi;listras
+Tapir;focinho
+Gnu;manada
+Hiena-malhada;risada
+Hiena-marrom;carniça
+Fossa;Madagascar
+Suricato;em pé
+Mico-leão-dourado;juba
+Sagui;pequenino
+Mandril;colorido
+Babuíno;bando
+Gorila;peito
+Chimpanzé;esperto
+Orangotango;laranja
+Dragão-de-komodo;língua
+Salamandra;úmida
+Axolote — anfíbio que nunca “cresce” totalmente;sorriso
+Peixe-palhaço;listras
+Peixe-leão;espinhos
+Peixe-lua — peixe gigante e achatado;boia
+Peixe-remo — peixe longo que parece uma fita;profundo
+Enguia;escorregadia
+Enguia-elétrica;choque
+Piranha;dentes
+Baiacu;infla
+Cavalo-marinho;cauda enrolada
+Estrela-do-mar;cinco
+Ouriço-do-mar;espinhos
+Lula;tentáculos
+Lula-colossal — lula gigante das profundezas;enorme
+Nautilus — molusco com concha em espiral;espiral
+Krill;minúsculo
+Plâncton;invisível
+Besouro;casca dura
+Escaravelho;casca dura
+Louva-a-deus;patas dobradas
+Bicho-pau;disfarce
+Cigarra;barulhenta
+Libélula;asas transparentes
+Mariposa;noturna
+Vespa;ferrão
+Formiga;fila
+Cupim;madeira
+Escorpião;cauda
+Caracol;lento
+Lesma;gosma
+Minhoca;terra
+Toupeira;túnel
+Musaranho;minúsculo
+Doninha-europeia;comprida
+Quokka — marsupial conhecido como “animal mais feliz”;sorriso
+Wallaby — tipo menor de canguru;pula
+Dingo — cachorro selvagem australiano;uivo
+Canguru-arborícola — canguru que vive em árvores;galhos
+Equidna — mamífero que põe ovos;espinhos
+Narval — baleia com um chifre/dente enorme;gelo
+Beluga — baleia branca muito vocal;branca
+Peixe-boi;lento
+Dugongo — parecido com peixe-boi;lento
+Morsa;presas
+Leão-marinho;bigode
+Elefante-marinho;gigante
+Foca-leopardo;pintas
+Albatroz;asas enormes
+Condor;montanha
+Urubu;preto
+Falcão;veloz
+Gavião;garras
+Pica-pau;bate
+Corvo;preto
+Gralha;preta
+Andorinha;migra
+Pelicano;bolsa
+Cegonha;pernas longas
+Garça;pernas longas
+Ibis;bico curvo
+Kiwi — ave que não voa da Nova Zelândia;noturno
+Casuar — ave perigosa com garras afiadas;azul
+Emu — ave grande australiana que não voa;corre
+Pinguim-imperador;gelo
+Pinguim-de-magalhães;colônia
+Tubarão-branco;dentes
+Tubarão-martelo;cabeça larga
+Tubarão-baleia;manso
+Raia;achatada
+Manta;asas
+Polvo-gigante;tentáculos
+Polvo-de-anéis-azuis — pequeno mas extremamente venenoso;anéis
+Água-viva-caixa — uma das mais venenosas do mundo;transparente
+Caranguejo-eremita;concha emprestada
+Lagostim;pinças
+Camarão;rosado
+Camarão-mantis — golpe extremamente rápido e forte;soco
+Centopeia;muitas pernas
+Lacraia;muitas pernas
+Lagartixa;parede
+Gecko;patas grudentas
+Cobra-coral;colorida
+Jiboia;aperta
+Sucuri;enorme
+Víbora;veneno
+Cobra-rei;veneno
+Crocodilo-do-nilo;mandíbula
+Aligátor;mandíbula
+Tartaruga-marinha;casco
+Jabuti;casco
+Teiú;rabo comprido
+Camaleão-pantera;muda de cor
+Iguana-marinha — iguana que nada no mar;sal
+Coelho;orelhas
+Lebre;corre
+Porquinho-da-índia;guincho
+Hamster;bochecha
+Chinchila;macia
+Castor;represa
+Marmota;toca
+Esquilo-voador;plana
+Canguru-rato;pula
+Bandicoot — pequeno marsupial australiano parecido com um rato que pula;pula

@@ -1,0 +1,109 @@
+Comidas 🍕
+Macarronada;molho vermelho
+Nhoque;batata
+Ravioli;recheado
+Capeletti;caldo
+Pizza de calabresa;cebola
+Pizza de frango com catupiry;cremosa
+Hot dog;pão
+Batata frita;sal
+Onion rings;empanado
+Frango frito;crocante
+Frango à parmegiana;queijo derretido
+Filé à milanesa;empanado
+Escondidinho;gratinado
+Empadão;massa amanteigada
+Empada;pequena
+Bolinho de bacalhau;fritura
+Kibe frito;trigo
+Kibe cru;azeite
+Tabule;salsinha
+Falafel;grão-de-bico
+Shawarma;espeto
+Gyros;pão pita
+Paella;panela grande
+Gazpacho;gelado
+Tortilla espanhola;ovo
+Nachos;crocante
+Guacamole;verde
+Chili;apimentado
+Costela barbecue;osso
+Pulled pork;desfiado
+Mac and cheese;amarelo
+Panini;prensado
+Bagel;furo
+Croissant;folhado
+Brioche;manteiga
+Donut;furo
+Cupcake;cobertura
+Cheesecake;base de biscoito
+Torta de limão;merengue
+Torta de maçã;canela
+Brownie;quadrado
+Mousse de chocolate;aerado
+Mousse de maracujá;azedinho
+Gelatina;treme
+Pavê;camadas
+Banoffee;banana
+Milkshake;canudo
+Smoothie;frutas batidas
+Suco natural;gelo
+Refrigerante;gás
+Café;amargo
+Capuccino;espuma
+Chocolate quente;caneca
+Chá;saquinho
+Água de coco;canudo
+Caldo de cana;pastel
+Ceviche;limão
+Sashimi;cru
+Uramaki;enrolado
+Hot roll;empanado
+Onigiri;triângulo
+Bibimbap;tigela
+Kimchi;fermentado
+Tempurá;empanado leve
+Okonomiyaki;chapa
+Takoyaki;bolinhas
+Gyoza;dobrado
+Missoshiru;caldo
+Pho;caldo
+Pad thai;amendoim
+Arroz frito;wok
+Frango xadrez;castanha
+Rolinho primavera;enrolado
+Charuto de folha de uva;enrolado
+Polenta;fubá
+Polenta frita;crocante
+Sopa de legumes;colher
+Caldo verde;couve
+Canja;doente
+Feijão tropeiro;farinha
+Dobradinha;bucho
+Galinhada;açafrão
+Virado à paulista;torresmo
+Arroz doce;canela
+Curau;milho
+Doce de leite;pegajoso
+Romeu e Julieta;goiabada
+Queijo coalho;espeto
+Queijo minas;branco
+Requeijão;copo
+Iogurte;pote
+Granola;crocante
+Mel;pegajoso
+Azeitona;caroço
+Pepino em conserva;vinagre
+Alface;folha
+Tomate;vermelho
+Cenoura;laranja
+Beterraba;mancha
+Milho;espiga
+Ervilha;verde
+Ovo mexido;frigideira
+Ovo frito;gema
+Omelete;dobrado
+Panqueca;fina
+Crepioca;tapioca
+Wrap;enrolado
+Sanduíche natural;fresco

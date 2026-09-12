@@ -1,0 +1,51 @@
+Marcas 🏷️
+Nike;tênis
+Adidas;listras
+Coca-Cola;vermelho
+Pepsi;azul
+McDonald's;amarelo
+Burger King;coroa
+Apple;maçã
+Samsung;azul
+Google;colorido
+Microsoft;janela
+Netflix;vermelho
+Spotify;verde
+Amazon;caixa
+Disney;castelo
+Lego;peças
+Ferrari;vermelho
+Lamborghini;touro
+Tesla;elétrico
+BMW;azul e branco
+Toyota;confiável
+Volkswagen;azul
+Havaianas;borracha
+Natura;verde
+Boticário;perfume
+Ambev;cerveja
+Skol;redondo
+Brahma;vermelho
+Heineken;verde
+Starbucks;verde
+Nestlé;ninho
+Lacta;roxo
+Garoto;azul
+Bauducco;panetone
+Nutella;pote
+Red Bull;asas
+Monster;verde
+Gatorade;raio
+Puma;felino
+Vans;xadrez
+Converse;estrela
+Levi's;jeans
+Zara;preto
+Uber;preto
+iFood;vermelho
+Mercado Livre;amarelo
+Magazine Luiza;azul
+Casas Bahia;prestação
+Bradesco;vermelho
+Itaú;laranja
+Nubank;roxo
