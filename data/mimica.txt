@@ -1,0 +1,386 @@
+# Mímica — uma palavra ou ação por linha. Tem que dar pra fazer com o corpo.
+Escovar os dentes
+Dirigir bêbado
+Pescar
+Tirar selfie
+Trocar fralda
+Andar de skate
+Surfar
+Fazer churrasco
+Cortar cebola
+Jogar boliche
+Tocar violino
+Tocar bateria
+Boxear
+Fazer ioga
+Pular corda
+Andar na chuva
+Passar roupa
+Lavar louça
+Cortar cabelo
+Fazer barba
+Tomar injeção
+Arrancar dente
+Dar à luz
+Assaltar banco
+Fugir da polícia
+Escalar montanha
+Pular de paraquedas
+Mergulhar
+Patinar no gelo
+Esquiar
+Jogar vôlei
+Cobrar pênalti
+Defender pênalti
+Bater no juiz
+Dançar funk
+Dançar valsa
+Dançar balé
+Cantar no karaokê
+Fazer pipoca
+Assar bolo
+Sorvete derretendo
+Comer pizza quente
+Engasgar
+Espirrar
+Soluçar
+Bocejar
+Chorar assistindo filme
+Rir sem parar
+Ficar bravo no trânsito
+Perder o ônibus
+Esperar o pix cair
+Carregar o celular
+Wi-Fi caindo
+Tirar foto pro casamento
+Pedir em casamento
+Terminar namoro
+Fazer a mala
+Perder a mala no aeroporto
+Passar no raio-x do aeroporto
+Ficar preso no elevador
+Subir escada rolante errada
+Pisar em lego
+Pisar em cocô
+Levar choque
+Acordar atrasado
+Apertar soneca
+Dormir na aula
+Cabecear de sono
+Colar na prova
+Levar bronca da mãe
+Fazer cócegas
+Se olhar no espelho
+Passar maquiagem
+Colocar lente de contato
+Tirar cera do ouvido
+Estalar o pescoço
+Torcer o pé
+Andar de muletas
+Empurrar carrinho de supermercado
+Passar no caixa
+Discutir preço
+Contar dinheiro
+Tocar campainha e correr
+Regar plantas
+Passear com cachorro
+Dar banho no gato
+Espantar mosquito
+Matar barata
+Fugir de abelha
+Andar a cavalo
+Ordenhar vaca
+Tosquiar ovelha
+Catar coco
+Descascar banana
+Comer macarrão
+Tomar sopa quente
+Beber água de coco
+Abrir garrafa de champanhe
+Servir café
+Queimar a língua
+Ganhar na loteria
+Cavar buraco
+Plantar árvore
+Rachar lenha
+Acender fogueira
+Assar marshmallow
+Montar barraca
+Remar
+Nadar cachorrinho
+Boiar
+Se afogar
+Salvar alguém do mar
+Fazer respiração boca a boca
+Massagear alguém
+Fazer unha
+Costurar
+Tricotar
+Pintar parede
+Martelar prego
+Furar com furadeira
+Apertar parafuso
+Trocar lâmpada
+Trocar pneu
+Empurrar carro
+Estacionar de ré
+Buzinar
+Pedir carona
+Andar de bicicleta
+Cair de bicicleta
+Andar de patinete
+Andar de moto
+Pilotar avião
+Pilotar helicóptero
+Ser astronauta
+Andar na lua
+Flutuar no espaço
+Atirar com arco e flecha
+Lutar com espada
+Lutar karatê
+Lutar sumô
+Ser boxeador nocauteado
+Levantar peso
+Fazer flexão
+Correr maratona
+Cruzar linha de chegada
+Subir no pódio
+Comemorar gol
+Ser expulso do jogo
+Fingir falta
+Jogar dardo
+Jogar sinuca
+Jogar pingue-pongue
+Jogar tênis
+Jogar golfe
+Jogar basquete
+Fazer embaixadinha
+Girar bambolê
+Malabarismo
+Andar na corda bamba
+Ser palhaço
+Ser mímico
+Ser estátua viva
+Ser mágico
+Tirar coelho da cartola
+Ler mão
+Ver bola de cristal
+Ser zumbi
+Ser vampiro
+Ser lobisomem
+Ser fantasma
+Ser múmia
+Ser robô
+Ser macaco
+Ser galinha
+Ser pinguim
+Ser canguru
+Ser elefante
+Ser girafa
+Ser cobra
+Ser tartaruga
+Ser sapo
+Ser gato
+Ser cachorro
+Ser peixe
+Ser caranguejo
+Ser polvo
+Ser gorila
+Ser preguiça
+Ser urso
+Ser abelha
+Ser aranha
+Ser borboleta
+Ser dinossauro
+Ser tubarão
+Ser jacaré
+Ser cavalo
+Ser touro
+Ser porco
+Ser galo cantando
+Ser coruja
+Ser águia
+Ser morcego
+Ser ovelha
+Ser vaca
+Ser bebê chorando
+Ser velhinho
+Ser bêbado
+Ser fisiculturista
+Ser modelo na passarela
+Ser DJ
+Ser rapper
+Ser cantor de ópera
+Ser maestro
+Ser guitarrista de rock
+Ser jogador de futebol
+Ser juiz de futebol
+Ser goleiro
+Ser nadador
+Ser ginasta
+Ser bailarina
+Ser lutador de MMA
+Ser cozinheiro
+Ser garçom
+Ser barbeiro
+Ser dentista
+Ser cirurgião
+Ser enfermeiro
+Ser policial
+Ser bombeiro
+Ser ladrão
+Ser detetive
+Ser espião
+Ser fotógrafo
+Ser jornalista
+Ser professor bravo
+Ser aluno bagunceiro
+Ser motorista de ônibus
+Ser motorista de Uber
+Ser piloto de fórmula 1
+Ser caminhoneiro
+Ser pedreiro
+Ser pintor
+Ser escultor
+Ser pescador
+Ser fazendeiro
+Ser rei
+Ser rainha
+Ser príncipe
+Ser pirata
+Ser ninja
+Ser samurai
+Ser caubói
+Ser índio
+Ser cientista maluco
+Ser super-herói voando
+Ser vilão rindo
+Ser sereia
+Ser bruxa
+Ser fada
+Ser gigante
+Ser anão
+Ser Papai Noel
+Ser coelhinho da Páscoa
+Ser Saci
+Ser Curupira
+Ser Cuca
+Ser Boto
+Ser Mula-sem-cabeça
+Ser Homem-Aranha
+Ser Hulk
+Ser Batman
+Ser Superman
+Ser Mulher-Maravilha
+Ser Flash
+Ser Thor
+Ser Capitão América
+Ser Homem de Ferro
+Ser Wolverine
+Ser Bob Esponja
+Ser Pikachu
+Ser Mario
+Ser Sonic
+Ser Pernalonga
+Ser Mickey
+Ser Popeye
+Ser Elsa (Frozen)
+Ser Shrek
+Ser Darth Vader
+Ser Harry Potter
+Ser Jack Sparrow
+Ser Rocky
+Ser Forrest Gump
+Ser Michael Jackson
+Ser Neymar caindo
+Ser Cristiano Ronaldo comemorando
+Ser Anitta
+Ser Faustão
+Ser Silvio Santos
+Ser Xuxa
+Ser Galvão Bueno narrando
+Ser Chaves
+Ser Kiko
+Ser Seu Madruga
+Ser Chapolin
+Ser Pica-Pau
+Ser Tom perseguindo Jerry
+Ser Scooby-Doo com medo
+Ser Homer Simpson
+Ser Bart Simpson
+Ser Goku
+Ser Naruto
+Ser Luffy
+Ser Mr. Bean
+Ser Charlie Chaplin
+Ser Titanic (proa do navio)
+Ser Matrix (desviando de bala)
+Ser Karatê Kid (golpe da garça)
+Ser Rei Leão (levantando Simba)
+Ser Psicose (cena do chuveiro)
+Ser Tubarão (nadadora fugindo)
+Ser Exorcista (cabeça girando)
+Ser Gênio da lâmpada
+Ser Frankenstein
+Ser King Kong
+Ser Godzilla
+Ser E.T. (dedo brilhando)
+Ser Chucky
+Ser Pennywise (balão)
+Ser Jason (máscara e facão)
+Ser Freddy Krueger
+Vestido de noiva
+Óculos
+Guarda-chuva
+Cadeira de balanço
+Cama elástica
+Escorregador
+Balanço
+Gangorra
+Carrossel
+Montanha-russa
+Roda-gigante
+Elevador
+Escada rolante
+Porta giratória
+Ventilador
+Máquina de lavar
+Liquidificador
+Torradeira
+Micro-ondas
+Geladeira
+Fogão
+Chuveiro
+Privada
+Espelho
+Relógio
+Despertador
+Telefone antigo
+Máquina de escrever
+Impressora travada
+Aspirador de pó
+Cortador de grama
+Chuva
+Trovão
+Vento forte
+Tornado
+Terremoto
+Vulcão
+Tsunami
+Neve
+Arco-íris
+Nascer do sol
+Lua cheia
+Estrela cadente
+Fogos de artifício
+Avião decolando
+Trem
+Bonde
+Helicóptero
+Submarino
+Foguete
+Balão de ar quente
+Táxi
+Ambulância
+Caminhão de lixo
+Carrinho de mão
