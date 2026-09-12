@@ -1,668 +1,1951 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Noite de Jogos — Multiplayer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Noite de Jogos</title>
+<meta name="description" content="Jogos de festa pra jogar juntos, com um só celular.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Noite de Jogos">
+<meta property="og:title" content="Noite de Jogos">
+<meta property="og:description" content="19 jogos de festa pra jogar juntos com um celular só — impostor, dedução, debates e mais. Grátis, sem instalar nada.">
+<meta property="og:url" content="https://pdroaquin0.github.io/noite-de-jogos/">
+<meta property="og:image" content="https://pdroaquin0.github.io/noite-de-jogos/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Noite de Jogos">
+<meta name="twitter:description" content="19 jogos de festa pra jogar juntos com um celular só. Grátis, sem instalar nada.">
+<meta name="twitter:image" content="https://pdroaquin0.github.io/noite-de-jogos/og-image.png">
+<meta name="theme-color" content="#0e0e14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Noite de Jogos">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: system-ui, sans-serif;
-    background: #0e0e14;
-    color: #f2f2f5;
-    margin: 0;
-    padding: 20px;
-    max-width: 480px;
-    margin-inline: auto;
+  :root{
+    --bg:#0e0e14; --surface:#16161f; --surface-2:#1e1e2b; --surface-3:#26263a;
+    --text:#f4f1ea; --muted:#8c8ca0; --faint:#5c5c70;
+    --lime:#c6f24e; --lime-d:#9fd02a;
+    --red:#ff3b5c; --red-d:#d61f43;
+    --gold:#ffcb45;
+    --border:rgba(255,255,255,.09);
+    --display:'Bricolage Grotesque',system-ui,sans-serif;
+    --body:'Sora',system-ui,sans-serif;
+    --pad:16px;
   }
-  h1, h2, h3 { margin-top: 0; }
-  .screen { display: none; }
-  .screen.active { display: block; }
-  .card {
-    background: #1a1a22;
-    border: 1px solid #2a2a35;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%;height:100%}
+  body{
+    min-height:100%;background:var(--bg);color:var(--text);font-family:var(--body);
+    background-image:
+      radial-gradient(circle at 15% -10%, rgba(198,242,78,.07), transparent 40%),
+      radial-gradient(circle at 90% 110%, rgba(255,59,92,.08), transparent 45%);
+    background-attachment:fixed;overflow-x:hidden;
   }
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #12121a;
-    color: #fff;
+  #app{
+    max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;
+    padding:0 max(var(--pad),env(safe-area-inset-left)) calc(40px + env(safe-area-inset-bottom)) max(var(--pad),env(safe-area-inset-right));
   }
-  button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #ffcb45;
-    color: #1a1407;
-    font-weight: 700;
-    cursor: pointer;
-    margin-bottom: 8px;
+  body.has-footer #app{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  #appfooter{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;
+    align-items:center;justify-content:center;gap:11px;
+    padding:9px 14px calc(9px + env(safe-area-inset-bottom));
+    background:rgba(14,14,20,.9);backdrop-filter:blur(10px);
+    border-top:1px solid var(--border);font-size:12px;color:var(--muted);
   }
-  button.secondary { background: #2a2a35; color: #f2f2f5; }
-  button.link { background: transparent; color: #ffcb45; text-decoration: underline; }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
-  .hint { font-size: 13px; color: #9a9aa5; }
-  .erro { color: #ff6b6b; font-size: 13px; }
-  #lobby-jogadores, #stop-placar { list-style: none; padding: 0; }
-  #lobby-jogadores li, #stop-placar li {
-    background: #12121a; padding: 10px; border-radius: 8px; margin-bottom: 6px;
-  }
-  .stop-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px;
-  }
-  .stop-letra { font-size: 40px; font-weight: 800; color: #ffcb45; }
-  .stop-timer { font-size: 24px; font-weight: 700; }
-  .stop-categoria { margin-bottom: 10px; }
-  .stop-categoria label { display: block; font-size: 13px; color: #9a9aa5; margin-bottom: 4px; }
-  .stop-voto-item {
-    display: flex; align-items: center; gap: 8px;
-    background: #12121a; padding: 10px; border-radius: 8px; margin-bottom: 6px;
-  }
-  .stop-voto-item span { flex: 1; font-size: 14px; }
-  .stop-voto-item button { width: auto; padding: 6px 10px; margin: 0; }
+  body.has-footer #appfooter{display:flex}
+  #appfooter .kofi{background:var(--gold);color:#1a1407;font-weight:700;padding:7px 13px;border-radius:9px;text-decoration:none;font-size:12.5px;white-space:nowrap;flex:0 0 auto;transition:.15s}
+  #appfooter .kofi:active{transform:scale(.95)}
+  #appfooter .ftxt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  #appfooter .ftxt b{color:var(--text)}
+  .bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;
+    padding:calc(14px + env(safe-area-inset-top)) 0 12px;background:linear-gradient(var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
+  .brand{font-family:var(--display);font-weight:800;font-size:clamp(17px,5vw,20px);letter-spacing:-.02em;line-height:1;display:flex;align-items:center;gap:6px;min-width:0}
+  .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand b{color:var(--lime)}
+  .bar-meta{margin-left:auto;display:flex;gap:7px;flex:0 0 auto}
+  .pill{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:7px 11px;border-radius:20px;display:flex;align-items:center;gap:5px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .pill:active{transform:scale(.94)}
+  .pill b{color:var(--text)}
+  h1{font-family:var(--display);font-weight:800;letter-spacing:-.03em;line-height:.95}
+  .screen{animation:rise .35s cubic-bezier(.2,.8,.2,1) both;flex:1;display:flex;flex-direction:column}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .stagger>*{animation:rise .4s cubic-bezier(.2,.8,.2,1) both}
+  .stagger>*:nth-child(1){animation-delay:.02s}.stagger>*:nth-child(2){animation-delay:.07s}
+  .stagger>*:nth-child(3){animation-delay:.12s}.stagger>*:nth-child(4){animation-delay:.17s}
+  .stagger>*:nth-child(5){animation-delay:.22s}.stagger>*:nth-child(6){animation-delay:.27s}
+  .muted{color:var(--muted)}.faint{color:var(--faint)}
+  .center{text-align:center}
+  .row{display:flex;gap:10px;align-items:center}
+  .grow{flex:1;min-width:0}
+  .btn{font-family:var(--body);font-weight:700;font-size:16px;border:none;border-radius:16px;padding:16px 18px;width:100%;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:9px;line-height:1.15;text-align:center}
+  .btn:active{transform:scale(.97)}
+  .btn-lime{background:var(--lime);color:#10100a}
+  .btn-red{background:var(--red);color:#fff}
+  .btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+  .btn-gold{background:var(--gold);color:#241c00}
+  .btn-lg{padding:19px;font-size:17px;border-radius:20px}
+  .btn-sm{padding:11px 14px;font-size:14px;border-radius:12px;width:auto}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px}
+  .tile{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:15px;text-align:left;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+  .tile:active{transform:scale(.97)}
+  .tile.disabled{opacity:.36;pointer-events:none}
+  .tile .emoji{font-size:25px;line-height:1}
+  .tile .tname{font-family:var(--display);font-weight:700;font-size:16px;margin-top:7px;letter-spacing:-.02em;line-height:1.05}
+  .tile .tdesc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.32}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:7px;margin-top:9px}
+  .tag.imp{background:rgba(255,59,92,.16);color:#ff8298}
+  .tag.reg{background:rgba(198,242,78,.16);color:var(--lime)}
+  .tag.esc{background:rgba(120,180,255,.16);color:#8ec0ff}
+  .tag.deb{background:rgba(255,203,69,.16);color:var(--gold)}
+  .tag.maf{background:rgba(168,130,255,.16);color:#bda4ff}
+  .tag.perf{background:rgba(95,217,194,.16);color:#5fd9c2}
+  .tag.vote{background:rgba(255,110,180,.16);color:#ff8fc4}
+  .tag.intimo{background:rgba(255,92,138,.18);color:#ff7aa0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:13px;font-weight:600;padding:9px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:.15s}
+  .chip:active{transform:scale(.95)}
+  .chip.on{background:var(--lime);color:#10100a;border-color:var(--lime)}
+  .chip.rm{padding-right:9px}
+  .stepper{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stepper button{width:48px;height:48px;background:none;border:none;color:var(--text);font-size:24px;font-weight:700;cursor:pointer;flex:0 0 auto}
+  .stepper button:active{background:var(--surface-3)}
+  .stepper .val{flex:1;text-align:center;font-family:var(--display);font-weight:700;font-size:20px;min-width:54px}
+  .pinput{display:flex;gap:8px;margin-bottom:14px}
+  .pinput input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 15px;color:var(--text);font-family:var(--body);font-size:16px;outline:none}
+  .pinput input:focus{border-color:var(--lime)}
+  .plist{display:flex;flex-direction:column;gap:8px}
+  .prow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+  .pnum{width:26px;height:26px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);flex:0 0 auto}
+  .prow .pn{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .xbtn{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;padding:4px 6px;line-height:1;flex:0 0 auto}
+  .xbtn:active{color:var(--red)}
+  .pass{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:24px 4px;flex:1}
+  .reveal-card{width:100%;border-radius:24px;padding:30px 20px;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s;position:relative}
+  .reveal-card.hidden{background:var(--surface-2)}
+  .reveal-card.shown.cidade{background:linear-gradient(160deg,#1a2410,#0e0e14);border-color:var(--lime)}
+  .reveal-card.shown.impostor{background:linear-gradient(160deg,#2a0f17,#0e0e14);border-color:var(--red)}
+  .reveal-card .big{font-family:var(--display);font-weight:800;font-size:clamp(30px,9vw,42px);letter-spacing:-.03em;line-height:1.02;margin:6px 0;word-break:break-word;hyphens:auto}
+  .reveal-card .big.imp{color:var(--red)}
+  .reveal-card .big.cid{color:var(--lime)}
+  .flip-in{animation:flip .35s ease both}
+  @keyframes flip{from{opacity:0;transform:rotateX(40deg) scale(.95)}to{opacity:1;transform:none}}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin:22px 0}
+  .timer{font-family:var(--display);font-weight:800;font-size:clamp(64px,24vw,96px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .timer.warn{color:var(--red);animation:pulse .6s infinite alternate}
+  @keyframes pulse{to{transform:scale(1.06)}}
+  .srow{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:9px;transition:.3s}
+  .srow .rank{font-family:var(--display);font-weight:800;font-size:22px;width:34px;text-align:center;color:var(--faint);flex:0 0 auto}
+  .srow.top1{border-color:var(--gold);background:linear-gradient(120deg,rgba(255,203,69,.1),var(--surface))}
+  .srow.top1 .rank{color:var(--gold)}
+  .srow .sn{flex:1;min-width:0;font-weight:600;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .srow .sp{font-family:var(--display);font-weight:800;font-size:24px;flex:0 0 auto}
+  .lead{font-size:15px;line-height:1.55;color:var(--muted)}
+  .sec-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:22px 0 11px}
+  .note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--lime);border-radius:10px;padding:11px 13px;line-height:1.5}
+  .note.imp{border-left-color:var(--red)}
+  .spacer{height:14px}
+  .big-emoji{font-size:clamp(48px,15vw,58px);line-height:1}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+  .conf{position:absolute;width:9px;height:14px;top:-20px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.8}}
+  .resume{background:linear-gradient(120deg,rgba(255,203,69,.12),var(--surface));border:1px solid rgba(255,203,69,.45);color:var(--gold)}
+  @media (max-width:360px){:root{--pad:13px}.tile .tname{font-size:15px}.btn{font-size:15px}}
+  @media (min-width:560px){.reveal-card{min-height:300px}}
 </style>
 </head>
 <body>
-
-<!-- ============================================================ -->
-<!-- TELA: ENTRADA -->
-<!-- ============================================================ -->
-<div id="tela-entrada" class="screen active">
-  <h1>🎲 Noite de Jogos</h1>
-
-  <section class="card">
-    <h2>Entrar numa sala</h2>
-    <input id="input-codigo-sala" placeholder="Código da sala (ex: BJ4K2)" maxlength="6" autocapitalize="characters" />
-    <input id="input-nickname" placeholder="Seu apelido" maxlength="24" />
-    <button id="btn-entrar-sala">Entrar</button>
-    <p id="erro-entrar-sala" class="erro" hidden></p>
-  </section>
-
-  <section class="card">
-    <h2>Criar uma sala</h2>
-    <input id="input-nickname-host" placeholder="Seu apelido" maxlength="24" />
-    <button id="btn-criar-sala">Criar sala de Stop</button>
-    <p class="hint">Não precisa de conta pra criar uma sala avulsa.</p>
-    <p id="erro-criar-sala" class="erro" hidden></p>
-  </section>
-
-  <section class="card">
-    <h2>Tem conta?</h2>
-    <p class="hint">Login é só necessário se você quer salvar grupos e histórico entre noites.</p>
-    <button id="btn-abrir-login" class="secondary">Entrar / Criar conta</button>
-  </section>
+<div id="app"></div>
+<div id="appfooter">
+  <a class="kofi" href="https://ko-fi.com/noitedjogos" target="_blank" rel="noopener noreferrer">☕ Apoiar</a>
+  <span class="ftxt">Noite de Jogos · <b>Pedro Aquino</b></span>
 </div>
+<script>
+/* =========================================================
+   BANCOS DE PALAVRAS (grandes)
+========================================================= */
+/* =========================================================
+   CONTEÚDO DOS JOGOS
+   Fica em arquivos de texto na pasta /data. Para adicionar
+   perguntas, temas ou palavras, edite os .txt/.csv — não este arquivo.
+   Ver README.md.
+========================================================= */
+const THEME_KEYS=['geral','anime','filmes','animais','comidas','futebol','lugares','profissoes','objetos','games','herois','marcas','musica','desenhos'];
+let THEMES={}, QPAIRS=[], SCALE_PROMPTS=[], BOTAO=[], OPINIOES=[], INUTIL=[], PERSONAGENS=[], ENTREVISTA_Q=[], HIST_WORDS=[], MAIS_PROVAVEL=[], VERDADES_HINT=[], QUEMDISSE=[], TABOO=[], SILENCIOSAS=[], QUENTES=[];
 
-<!-- ============================================================ -->
-<!-- TELA: LOGIN -->
-<!-- ============================================================ -->
-<div id="tela-login" class="screen">
-  <h2>Entrar</h2>
-  <input id="login-email" type="email" placeholder="E-mail" />
-  <input id="login-senha" type="password" placeholder="Senha" />
-  <button id="btn-fazer-login">Entrar</button>
-  <button id="btn-ir-cadastro" class="link">Não tenho conta ainda</button>
-  <button id="btn-voltar-entrada-1" class="secondary">Voltar</button>
-  <p id="erro-login" class="erro" hidden></p>
-</div>
+async function readText(path){
+  const r=await fetch('./data/'+path,{cache:'no-cache'});
+  if(!r.ok) throw new Error(path+' ('+r.status+')');
+  return (await r.text()).split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
+}
+const readList=p=>readText(p);
+const readCsv=async p=>(await readText(p)).slice(1).map(l=>l.split(';').map(c=>c.trim()));
 
-<div id="tela-cadastro" class="screen">
-  <h2>Criar conta</h2>
-  <input id="cadastro-nickname" placeholder="Seu apelido" maxlength="24" />
-  <input id="cadastro-email" type="email" placeholder="E-mail" />
-  <input id="cadastro-senha" type="password" placeholder="Senha (mín. 6 caracteres)" />
-  <button id="btn-fazer-cadastro">Criar conta</button>
-  <button id="btn-voltar-entrada-2" class="secondary">Voltar</button>
-  <p id="erro-cadastro" class="erro" hidden></p>
-</div>
-
-<!-- ============================================================ -->
-<!-- TELA: LOBBY -->
-<!-- ============================================================ -->
-<div id="tela-lobby" class="screen">
-  <h2>Sala <span id="lobby-codigo"></span></h2>
-  <p class="hint">Compartilha esse código com a galera pra entrarem.</p>
-
-  <ul id="lobby-jogadores"></ul>
-
-  <button id="btn-iniciar-jogo" hidden>Começar</button>
-  <p id="lobby-esperando" class="hint">Esperando o host começar o jogo...</p>
-  <p id="erro-lobby" class="erro" hidden></p>
-</div>
-
-<!-- ============================================================ -->
-<!-- TELA: STOP -->
-<!-- ============================================================ -->
-<div id="tela-stop" class="screen">
-  <div class="stop-header">
-    <span class="stop-letra" id="stop-letra"></span>
-    <span class="stop-timer" id="stop-timer">60s</span>
-  </div>
-
-  <div id="stop-categorias"></div>
-
-  <button id="btn-stop">🛑 STOP!</button>
-
-  <div id="stop-votacao" hidden>
-    <h3>Hora de votar</h3>
-    <div id="stop-votacao-lista"></div>
-    <button id="btn-finalizar-votacao">Ver resultado</button>
-  </div>
-
-  <div id="stop-resultado" hidden>
-    <h3>Resultado da rodada</h3>
-    <ul id="stop-placar"></ul>
-    <button id="btn-proxima-rodada">Próxima rodada</button>
-    <button id="btn-sair-sala" class="secondary">Sair da sala</button>
-  </div>
-</div>
-
-<script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-// ============================================================
-// CONFIG — mesmas credenciais do supabase-client.js original
-// ============================================================
-const SUPABASE_URL = 'https://qzotxtcuopaqgcfpjntb.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6b3R4dGN1b3BhcWdjZnBqbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0Mjk1NjIsImV4cCI6MjA5OTAwNTU2Mn0.QCJITizABxr7IynONUxyd1JNcSkyeL1FGnJVDQGXZl8';
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// ============================================================
-// ESTADO GLOBAL DA SESSÃO DE JOGO (substitui os antigos window.__X__)
-// ============================================================
-const state = { room: null, player: null, round: null };
-
-const $ = (id) => document.getElementById(id);
-
-function irPara(telaId) {
-  document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
-  $(telaId).classList.add('active');
+async function loadData(){
+  const [temas,pares,taboo,regras,...listas]=await Promise.all([
+    Promise.all(THEME_KEYS.map(k=>readText('temas/'+k+'.txt'))),
+    readCsv('pares-perguntas.csv'),
+    readCsv('palavra-proibida.csv'),
+    readCsv('adivinhe-a-regra.csv'),
+    readList('escala-oculta.txt'), readList('dilema-do-botao.txt'), readList('concorda-ou-discorda.txt'),
+    readList('debate-inutil.txt'), readList('personagens.txt'), readList('entrevista-invertida.txt'),
+    readList('historia-em-turnos.txt'), readList('mais-provavel.txt'), readList('duas-verdades-dicas.txt'),
+    readList('quem-disse-isso.txt'), readList('verdades-silenciosas.txt'), readList('momentos-quentes.txt'),
+  ]);
+  THEME_KEYS.forEach((k,i)=>{
+    const [label,...lines]=temas[i]; const items=[], hints={};
+    lines.forEach(l=>{ const p=l.split(';'); const w=p[0].trim(); if(!w) return; items.push(w); if(p[1]&&p[1].trim()) hints[w]=p[1].trim(); });
+    THEMES[k]={label,items,hints};
+  });
+  QPAIRS=pares.filter(p=>p.length>=2).map(p=>[p[0],p[1]]);
+  const gReg=GAMES.find(g=>g.id==='adivinhe'); if(gReg) gReg.variants=regras.filter(r=>r.length>=3).map(r=>({name:r[0],prompt:r[1],secret:r[2]}));
+  TABOO=taboo.filter(t=>t.length>=2).map(t=>({word:t[0],taboo:t.slice(1).filter(Boolean)}));
+  [SCALE_PROMPTS,BOTAO,OPINIOES,INUTIL,PERSONAGENS,ENTREVISTA_Q,HIST_WORDS,MAIS_PROVAVEL,VERDADES_HINT,QUEMDISSE,SILENCIOSAS,QUENTES]=listas;
 }
 
-// ============================================================
-// AUTH
-// ============================================================
-async function ensureSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) return session;
-  const { data, error } = await supabase.auth.signInAnonymously();
-  if (error) throw error;
-  return data.session;
+const GAMES = [
+  {id:'camaleao', fam:'imp', emoji:'🦎', name:'Camaleão', min:3, max:14, theme:true,
+   desc:'Todos recebem o mesmo segredo. O camaleão, não. Achem ele.',
+   rules:'Todos os jogadores recebem a MESMA palavra/personagem secreto, menos o camaleão, que não recebe nada e precisa se misturar. Cada um, na sua vez, fala UMA palavra ou dá uma pista sutil ligada ao segredo, sem entregá-lo. O camaleão blefa improvisando em cima do que os outros dizem. No fim, todos discutem e votam em quem acham que é o camaleão.'},
+  {id:'invertida', fam:'imp', emoji:'🔄', name:'Pergunta Invertida', min:3, max:12, theme:false,
+   desc:'Mesma pergunta pra todos. O impostor recebe outra parecida.',
+   rules:'A maioria recebe uma pergunta. O impostor recebe uma pergunta PARECIDA, mas diferente — e nem sabe que a dele mudou. Todos respondem em voz alta. A resposta do impostor vai soar levemente fora de contexto. Discutam e votem.'},
+  {id:'coordenada', fam:'imp', emoji:'🎯', name:'Coordenada Errada', min:3, max:12, theme:true,
+   desc:'Todos veem a mesma lista. Um recebe o número errado.',
+   rules:'Todos veem a mesma lista de itens numerados. A cidade recebe o MESMO número secreto; o impostor recebe um número DIFERENTE (e não sabe). Cada um fala uma palavra ligada ao SEU item. Quem estiver no item errado vai se entregar. Discutam e votem.'},
+  {id:'duplo', fam:'imp', emoji:'🕵️', name:'Duplo Impostor', min:5, max:16, theme:true, impostors:2,
+   desc:'Como o Camaleão, mas com DOIS impostores que não se conhecem.',
+   rules:'Igual ao Camaleão, mas existem DOIS impostores, e eles não sabem quem é o outro. Eles podem até se acusar pra desviar a atenção. A cidade precisa achar os dois. Caos garantido.'},
+  {id:'mafia', fam:'maf', emoji:'🔪', name:'Máfia', min:5, max:16,
+   desc:'Dedução social. Máfia x Cidade, noite e dia, até alguém vencer. O celular é o narrador.',
+   rules:'O celular distribui os papéis e conduz tudo — ninguém fica de fora como mestre. À NOITE, o aparelho passa por cada vivo (cidadãos veem só "durma"): a Máfia escolhe quem matar, o Detetive investiga um jogador, o Médico protege alguém. DE DIA, o grupo descobre quem morreu (ou se foi salvo) e debate. Depois votam em quem linchar. A Cidade vence quando elimina toda a Máfia; a Máfia vence quando empata ou supera a Cidade em número. Vale como uma rodada da noite: a facção vencedora leva +2.'},
+  {id:'adivinhe', fam:'reg', emoji:'🕵️‍♂️', name:'Adivinhe a Regra', min:3, max:12,
+   desc:'Só o anfitrião sabe a regra secreta. O grupo descobre o padrão.',
+   rules:'O celular sorteia um cenário e uma regra secreta — só o anfitrião vê a regra. Cada jogador, na sua vez, diz algo dentro do cenário (ex.: o que levaria ao banquete). O anfitrião responde só "Pode" ou "Não pode", seguindo a regra à risca. O grupo tenta descobrir o padrão. Quem descobrir pontua; se ninguém descobrir, o anfitrião pontua.',
+   variants:[] /* preenchido a partir de data/adivinhe-a-regra.csv */},
+  {id:'escala', fam:'esc', emoji:'📊', name:'Escala Oculta', min:3, max:10, scale:true,
+   desc:'Cada um recebe um número 1–10 em segredo. Ordenem o grupo.',
+   rules:'Cada jogador recebe um número secreto de 1 a 10 sobre um tema (ex.: "nível de irritação no trânsito"). Cada um dá um exemplo da intensidade do seu número, SEM dizer o número. O grupo tenta ordenar todos do menor para o maior. Acertou a ordem inteira, todos pontuam.'},
+  {id:'pistas', fam:'esc', emoji:'🧩', name:'3 Pistas, 1 Conceito', min:3, max:12, clue:true, theme:true,
+   desc:'Um jogador dá 3 pistas. O grupo adivinha o conceito.',
+   rules:'Um jogador (sorteado) vê um conceito secreto e dá apenas TRÊS palavras como pista, uma de cada vez. O grupo tem que adivinhar o conceito. Acertou: o jogador que adivinhou e o que deu as pistas pontuam.'},
+  {id:'botao', fam:'deb', emoji:'🔘', name:'O Dilema do Botão', min:2, max:99,
+   desc:'Cenário polêmico. Aperta ou não? Defenda.',
+   rules:'O anfitrião lê o cenário. Cada um vota se apertaria o botão e defende seu ponto contra os outros. Não vale ficar em cima do muro. Sem placar fixo — opcionalmente o grupo dá +1 ao melhor argumento.'},
+  {id:'opiniao', fam:'deb', emoji:'⚖️', name:'Concorda ou Discorda', min:3, max:99,
+   desc:'Uma opinião polêmica. Cada lado defende o seu.',
+   rules:'O anfitrião lê a afirmação. Cada um se declara "concordo" ou "discordo" e defende seu lado. Sem ficar em cima do muro. Opcional: +1 ao argumento mais convincente da rodada.'},
+  {id:'inutil', fam:'deb', emoji:'🤪', name:'Debate Inútil', min:2, max:99,
+   desc:'Tema idiota. Defenda o absurdo com a maior seriedade possível.',
+   rules:'O celular sorteia um tema idiota. Cada um pega (ou sorteia) um lado e defende com argumentos SÉRIOS — lógica, emoção ou "fake ciência" valem. Não pode repetir argumento. Você ganha ponto se o outro rir ou ficar sem resposta. No fim, o grupo dá +1 a quem foi mais convincente (ou ridículo o suficiente).'},
+  {id:'entrevista', fam:'perf', emoji:'🎤', name:'Entrevista Invertida', min:3, max:14,
+   desc:'Um responde como um personagem secreto. O grupo entrevista.',
+   rules:'Um jogador é sorteado e recebe um personagem secreto (só ele vê). O resto do grupo faz perguntas — o celular sugere algumas — e o entrevistado responde SEM sair do personagem. Se quebrar o personagem, perde; se for convincente e engraçado, pontua. A cada rodada um novo jogador entra no banco dos entrevistados.'},
+  {id:'historia', fam:'perf', emoji:'🧩', name:'História em Turnos', min:2, max:99,
+   desc:'Criem uma história juntos. Cada turno vem com uma palavra obrigatória.',
+   rules:'O grupo monta uma história, um de cada vez. A cada turno o celular dá uma PALAVRA OBRIGATÓRIA que precisa entrar na frase (natural ou zoada) — e a frase tem que dar continuidade ao que veio antes. Você tem ~15s; travou ou ignorou a palavra, perde a vez. Quanto mais inesperada a entrada da palavra, melhor. Joguem umas 2 voltas e encerrem.'},
+  {id:'provavel', fam:'vote', emoji:'👉', name:'Quem é mais provável de…', min:3, max:99,
+   desc:'O celular lê uma situação. Na contagem, todos apontam pra alguém.',
+   rules:'O celular sorteia uma situação ("…sumir de uma festa sem avisar"). Na contagem regressiva — 3, 2, 1, JÁ! — todos apontam ao mesmo tempo para a pessoa do grupo que mais combina. Quem recebeu mais dedos leva +1 (ou perde, vocês decidem antes). Sem dó, sem pena.'},
+  {id:'verdades', fam:'vote', emoji:'🤥', name:'Duas Verdades e Uma Mentira', min:3, max:14,
+   desc:'Conte 3 coisas sobre você. O grupo aponta qual é a mentira.',
+   rules:'Um jogador é sorteado e o celular diz a ele, EM SEGREDO, em qual posição (1ª, 2ª ou 3ª) ele deve colocar a mentira. Ele conta as três coisas em voz alta, na ordem. O grupo debate e vota em qual número é a mentira. Acertou o número → o grupo pontua; o contador enganou todo mundo → ele leva +2. A cada rodada entra um novo contador.'},
+  {id:'quemdisse', fam:'vote', emoji:'💬', name:'Quem Disse Isso?', min:3, max:12,
+   desc:'Todos respondem a mesma pergunta em segredo. Votem na melhor.',
+   rules:'O celular passa por cada jogador com a MESMA pergunta engraçada. Cada um digita uma resposta em segredo. No fim, todas aparecem embaralhadas e anônimas — o grupo lê em voz alta e vota na melhor. O autor da resposta vencedora leva +1. Digitem rápido pra não travar a roda.'},
+  {id:'proibida', fam:'esc', emoji:'🚫', name:'Palavra Proibida', min:3, max:14,
+   desc:'Faça o grupo adivinhar a palavra sem dizer as proibidas.',
+   rules:'Um jogador vê uma palavra secreta e uma lista de 5 palavras PROIBIDAS. Ele descreve a palavra pro grupo adivinhar — mas não pode dizer nenhuma das proibidas (nem a própria palavra). Falou uma proibida, passou a vez. Quem adivinhar primeiro pontua junto com quem descreveu.'},
+  {id:'silenciosas', fam:'intimo', emoji:'🕯️', name:'Verdades Silenciosas', min:2, max:99,
+   desc:'Perguntas profundas pra encarar de frente. Pra quem topa se abrir.',
+   rules:'O celular sorteia uma pergunta funda — dessas que mexem por dentro. Cada um responde no seu tempo, em voz alta, sem julgamento. Quem quiser, pode passar. No fim, o grupo decide quem ficou mais abalado com a pergunta e dá +1 — ou só deixem a conversa correr, sem pontos. Jogo de se conhecer de verdade.'},
+  {id:'quentes', fam:'intimo', emoji:'👿', name:'Momentos Quentes', min:3, max:99,
+   desc:'Perguntas de paquera e tensão. Na contagem, todos apontam.',
+   rules:'O celular sorteia uma pergunta de clima — presença, química, atração. Na contagem 3, 2, 1, JÁ!, todos apontam ao mesmo tempo pra pessoa do grupo que mais combina com a pergunta. Quem recebeu mais dedos leva +1. Vibe de paquera — jogue com a galera certa.'},
+];
+
+const FAM_TAG = {imp:['imp','Impostor'], reg:['reg','Qual é a regra'], esc:['esc','Sintonia'], deb:['deb','Debate'], maf:['maf','Dedução'], perf:['perf','Atuação'], vote:['vote','Votação'], intimo:['intimo','Sem filtro']};
+
+/* =========================================================
+   ESTADO + PERSISTÊNCIA
+========================================================= */
+let S = {
+  screen:'home', players:[], theme:'geral', rounds:5, discuss:120,  currentRound:1, customWords:[], impHint:true, game:null, round:null,
+  lastGameId:null, lastWord:null, maf:null, hist:null,
+  stats:{games:{},rounds:0}, seenIntro:false,
+};
+let deferredPrompt=null;
+const SAVE_KEY='noiteJogos.v2';
+function save(){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      players:S.players, theme:S.theme, rounds:S.rounds, discuss:S.discuss, impHint:S.impHint,
+      currentRound:S.currentRound, customWords:S.customWords,
+      lastGameId:S.lastGameId, lastWord:S.lastWord,
+      stats:S.stats, seenIntro:S.seenIntro,
+    }));
+  }catch(e){}
 }
-
-async function signUp(email, password, nickname) {
-  const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { nickname } } });
-  if (error) throw error;
-  return data;
+function load(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d&&typeof d==='object'){
+      S.players=Array.isArray(d.players)?d.players:[];
+      S.theme=d.theme||'geral';
+      S.rounds=d.rounds||5; S.discuss=d.discuss||120; S.impHint=d.impHint!==false;
+      S.currentRound=d.currentRound||1;
+      S.customWords=Array.isArray(d.customWords)?d.customWords:[];
+      S.lastGameId=d.lastGameId||null; S.lastWord=d.lastWord||null;
+      S.stats=(d.stats&&typeof d.stats==='object')?{games:d.stats.games||{},rounds:d.stats.rounds||0}:{games:{},rounds:0};
+      S.seenIntro=!!d.seenIntro;
+      S.players.forEach(p=>{if(p.score==null)p.score=0;if(p.impTimes==null)p.impTimes=0;});
+    }
+  }catch(e){}
 }
+function hasProgress(){return S.players.length>0 && (S.currentRound>1 || S.players.some(p=>p.score>0));}
 
-async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
+/* =========================================================
+   HELPERS
+========================================================= */
+const $=(s)=>document.querySelector(s);
+const app=$('#app');
+const rnd=(n)=>Math.floor(Math.random()*n);
+const shuffle=(a)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=(s)=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function playable(g){return S.players.length>=g.min && S.players.length<=g.max;}
+function fmt(t){t=Math.max(0,t);const m=Math.floor(t/60),s=t%60;return m+':'+String(s).padStart(2,'0');}
+function themeItems(){
+  const it = S.theme==='custom' ? S.customWords : (THEMES[S.theme]?THEMES[S.theme].items:null);
+  return (it&&it.length) ? it : THEMES.geral.items;
 }
-
-ensureSession().catch(console.error);
-
-// ============================================================
-// SALAS
-// ============================================================
-const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-function generateRoomCode(length = 5) {
-  let code = '';
-  for (let i = 0; i < length; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
-  return code;
+function themeLabel(){
+  if(S.theme==='custom') return 'Meu tema ✏️';
+  return THEMES[S.theme] ? THEMES[S.theme].label : 'Geral 🎲';
 }
+function pickWord(items){
+  let w,t=0;
+  do{w=items[rnd(items.length)];t++;}while(w===S.lastWord && items.length>1 && t<8);
+  S.lastWord=w; return w;
+}
+const lastPick={};
+function pickNoRepeat(list,key){
+  if(!list||!list.length)return undefined;
+  if(list.length===1)return list[0];
+  let pool=list;
+  if(key&&lastPick[key]!==undefined)pool=list.filter(x=>x!==lastPick[key]);
+  if(!pool.length)pool=list;
+  const v=pool[rnd(pool.length)];
+  if(key)lastPick[key]=v;
+  return v;
+}
+function debateSplit(aLabel,bLabel){
+  if(S.players.length<4)return null;
+  const idx=shuffle(S.players.map((_,i)=>i));
+  const half=Math.ceil(idx.length/2);
+  const a=idx.slice(0,half).sort((x,y)=>x-y);
+  const b=idx.slice(half).sort((x,y)=>x-y);
+  return {a,b,aLabel,bLabel};
+}
+function go(scr){if(scr==='scoreboard'&&S.screen!=='scoreboard')S.returnTo=S.screen;S.screen=scr;render();window.scrollTo(0,0);}
 
-async function createRoom({ gameId, themeId = null, settings = {} }) {
-  await ensureSession();
-  const { data: { user } } = await supabase.auth.getUser();
+/* =========================================================
+   MONTAGEM DE RODADA
+========================================================= */
+function startGame(g){S.game=g;S.lastGameId=g.id;go('briefing');}
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const code = generateRoomCode();
-    const { data, error } = await supabase
-      .from('rooms')
-      .insert({ code, host_profile_id: user?.is_anonymous ? null : user?.id, game_id: gameId, theme_id: themeId, settings })
-      .select()
-      .single();
-    if (!error) return data;
-    if (error.code !== '23505') throw error;
+function buildRound(){
+  const g=S.game, P=S.players, n=P.length;
+  const items=themeItems();
+  let r={revealIdx:0};
+
+  if(g.fam==='imp'){
+    const nImp=g.impostors||1;
+    const impSet=shuffle([...Array(n).keys()]).slice(0,nImp);
+    r.impostors=impSet; r.cards=[];
+    impSet.forEach(i=>{ if(P[i])P[i].impTimes=(P[i].impTimes||0)+1; });
+    if(g.id==='camaleao'||g.id==='duplo'){
+      const word=pickWord(items); r.secretWord=word;
+      const impLabel=g.id==='duplo'?'IMPOSTOR':'CAMALEÃO';
+      const th=THEMES[S.theme]; const hint=(S.impHint&&th&&th.hints&&th.hints[word])?th.hints[word]:null; r.hint=hint;
+      const impSub=hint
+        ? `Você não recebeu o segredo. Sua única pista: <b style="color:var(--gold);font-size:15px">${esc(hint)}</b>. Use com cuidado — os outros podem citar a mesma coisa.`
+        : 'Você não recebeu o segredo. Misture-se sem se entregar.';
+      for(let i=0;i<n;i++){
+        r.cards.push(impSet.includes(i)
+          ? {type:'imp', big:`VOCÊ É O<br>${impLabel}`, sub:impSub}
+          : {type:'cid', kicker:'O segredo é', big:word, sub:'Dê uma pista sutil. Não entregue o segredo.'});
+      }
+    } else if(g.id==='invertida'){
+      const pair=pickNoRepeat(QPAIRS,'qpairs'); r.pair=pair;
+      for(let i=0;i<n;i++){
+        r.cards.push({type:'cid', kicker:'Sua pergunta', big:'❓',
+          q: impSet.includes(i)?pair[1]:pair[0], sub:'Leia em segredo e diga sua resposta em voz alta agora.'});
+      }
+    } else if(g.id==='coordenada'){
+      const k=Math.min(6, Math.max(2, items.length));
+      const list=shuffle(items).slice(0,k); r.list=list;
+      const realN=1+rnd(k); let impN; do{impN=1+rnd(k);}while(impN===realN&&k>1);
+      r.realN=realN; r.impN=impN;
+      for(let i=0;i<n;i++){
+        const num=impSet.includes(i)?impN:realN;
+        r.cards.push({type:'cid', list, num, kicker:'Seu número secreto', big:String(num),
+          sub:'Fale uma palavra ligada ao item número '+num+'.'});
+      }
+    }
   }
-  throw new Error('Não foi possível gerar um código de sala único. Tente novamente.');
+  else if(g.fam==='reg'){
+    r.host=rnd(n);
+    if(g.variants){ const v=pickNoRepeat(g.variants,'scenario'); r.secret=v.secret; r.scenario={name:v.name,prompt:v.prompt}; }
+    else { r.secret=g.secret; }
+  }
+  else if(g.id==='escala'){
+    const prompt=pickNoRepeat(SCALE_PROMPTS,'scale'); r.prompt=prompt;
+    const nums=shuffle([...Array(10).keys()].map(x=>x+1)).slice(0,n);
+    r.cards=nums.map((num)=>({type:'cid',kicker:prompt,big:String(num),sub:'Dê um exemplo dessa intensidade — sem dizer o número.'}));
+  }
+  else if(g.id==='pistas'){ r.clueGiver=rnd(n); r.concept=pickWord(items); }
+  else if(g.id==='botao'){ r.debate={head:'Aperta ou não?',text:pickNoRepeat(BOTAO,'botao'),split:debateSplit('🔴 APERTA','⚪ NÃO APERTA')}; }
+  else if(g.id==='opiniao'){ r.debate={head:'Concorda ou discorda?',text:pickNoRepeat(OPINIOES,'opiniao'),split:debateSplit('✅ CONCORDA','❌ DISCORDA')}; }
+  else if(g.id==='inutil'){ r.debate={head:'Defenda o absurdo:',text:pickNoRepeat(INUTIL,'inutil')}; }
+  else if(g.id==='entrevista'){ r.performer=rnd(n); r.character=pickNoRepeat(PERSONAGENS,'pers'); r.questions=shuffle(ENTREVISTA_Q).slice(0,5); }
+  else if(g.id==='provavel'){ r.prompt=pickNoRepeat(MAIS_PROVAVEL,'prov'); }
+  else if(g.id==='verdades'){ r.teller=rnd(n); r.liePos=1+rnd(3); r.hint=pickNoRepeat(VERDADES_HINT,'vh'); }
+  else if(g.id==='quemdisse'){ r.prompt=pickNoRepeat(QUEMDISSE,'qd'); r.answers=[]; r.collectIdx=0; }
+  else if(g.id==='proibida'){ r.clueGiver=rnd(n); r.taboo=pickNoRepeat(TABOO,'taboo'); }
+  else if(g.id==='silenciosas'){ r.prompt=pickNoRepeat(SILENCIOSAS,'sil'); }
+  else if(g.id==='quentes'){ r.prompt=pickNoRepeat(QUENTES,'qt'); }
+  S.round=r;
 }
 
-async function joinRoom(code, nickname, avatarEmoji = '🎮') {
-  const session = await ensureSession();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const { data: room, error: roomError } = await supabase
-    .from('rooms').select('*').eq('code', code.toUpperCase()).single();
-  if (roomError || !room) throw new Error('Sala não encontrada. Confira o código.');
-  if (room.status !== 'lobby') throw new Error('Essa sala já começou ou terminou.');
-
-  const { data: player, error: playerError } = await supabase
-    .from('room_players')
-    .insert({ room_id: room.id, profile_id: user?.is_anonymous ? null : user?.id, session_uid: session.user.id, nickname, avatar_emoji: avatarEmoji })
-    .select().single();
-  if (playerError) throw playerError;
-  return { room, player };
+/* =========================================================
+   PONTUAÇÃO
+========================================================= */
+function award(idxList,pts){idxList.forEach(i=>{if(S.players[i])S.players[i].score+=pts;});}
+function nextRoundOrEnd(){
+  if(S.currentRound>=S.rounds){go('champion');}
+  else{S.currentRound++;S.game=null;S.round=null;go('play');}
+}
+function resetNight(){
+  S.players.forEach(p=>{p.score=0;p.impTimes=0;});
+  S.currentRound=1;S.game=null;S.round=null;S.lastGameId=null;S.lastWord=null;
+  S.maf=null;S.hist=null;S.stats={games:{},rounds:0};
 }
 
-function subscribeToRoom(roomId, { onPlayersChange, onRoomChange }) {
-  const channel = supabase.channel(`room:${roomId}`)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'room_players', filter: `room_id=eq.${roomId}` }, onPlayersChange)
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, onRoomChange)
-    .subscribe();
-  return () => supabase.removeChannel(channel);
+/* =========================================================
+   TOP BAR
+========================================================= */
+function bar(){
+  return `<div class="bar">
+    <div class="brand">🎪 <span>Noite de <b>Jogos</b></span></div>
+    <div class="bar-meta">
+      <div class="pill" data-go="players">👤 <b>${S.players.length}</b></div>
+      <div class="pill" data-go="scoreboard">🏆 Placar</div>
+    </div>
+  </div>`;
 }
 
-// ============================================================
-// STOP — lógica do jogo
-// ============================================================
-const LETRAS_DISPONIVEIS = 'ABCDEFGHIJLMNOPQRSTUV'.split('');
-const CATEGORIAS_PADRAO = ['Nome', 'Cidade', 'Animal', 'Fruta/Verdura', 'Cor', 'Objeto', 'Profissão', 'Filme/Série'];
-
-function sortearLetra() {
-  return LETRAS_DISPONIVEIS[Math.floor(Math.random() * LETRAS_DISPONIVEIS.length)];
+/* =========================================================
+   TELAS
+========================================================= */
+function introItem(e,t,d){
+  return `<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px">
+    <div style="font-size:26px;line-height:1;flex:none;width:34px;text-align:center">${e}</div>
+    <div><div style="font-weight:700;font-size:15.5px">${t}</div><div class="muted" style="font-size:13px;line-height:1.45;margin-top:3px">${d}</div></div>
+  </div>`;
+}
+function viewIntro(){
+  return `<div class="screen" style="justify-content:center;min-height:100vh;display:flex;flex-direction:column;padding-top:30px">
+    <div class="center"><div class="big-emoji" style="font-size:clamp(50px,16vw,66px)">🎪</div></div>
+    <h1 class="center" style="font-size:clamp(30px,10vw,40px);margin-top:6px">Noite de <span style="color:var(--red)">Jogos</span></h1>
+    <p class="lead center" style="margin:12px 0 24px">Jogos de festa pra jogar juntos, com <b style="color:var(--text)">um só celular</b>.</p>
+    <div style="text-align:left;width:100%;max-width:400px;align-self:center">
+      ${introItem('📱','Um celular, todo mundo','Ninguém precisa instalar nada. O aparelho passa de mão em mão na roda.')}
+      ${introItem('🤫','Olhe só o seu segredo','Na sua vez, toque pra ver sua palavra ou papel — e passe sem mostrar pra ninguém.')}
+      ${introItem('🗣️','Conversem e votem','Depois que todos viram, vem a discussão. O app conduz, marca o tempo e conta os pontos.')}
+      ${introItem('🏆','No fim, o campeão','Os pontos somam a noite inteira. Tudo fica salvo no aparelho, mesmo sem internet.')}
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="introDone" style="width:100%;max-width:400px;align-self:center">Bora jogar ▶</button>
+  </div>`;
+}
+function viewHome(){
+  const resume = hasProgress()
+    ? `<button class="btn btn-gold btn-lg resume" data-action="toPlay">↩ Continuar noite · rodada ${S.currentRound}/${S.rounds}</button><div class="spacer"></div>`
+    : '';
+  return `${bar()}
+  <div class="screen stagger">
+    <div style="margin:14px 0 6px">
+      <h1 style="font-size:clamp(38px,12vw,46px)">Noite de<br><span style="color:var(--red)">Jogos</span></h1>
+      <p class="lead" style="margin-top:12px">Impostor, "qual é a regra", sintonia e debates. Método <b style="color:var(--text)">olha e passa</b>: cada um vê seu segredo e passa o celular adiante.</p>
+    </div>
+    <div class="spacer"></div>
+    ${resume}
+    <button class="btn ${resume?'btn-ghost':'btn-lime'} btn-lg" data-action="${resume?'newOrKeep':'toPlay'}">${resume?'＋ Nova noite (zera placar)':'▶ Começar a noite'}</button>
+    <div class="spacer"></div>
+    ${deferredPrompt?`<button class="btn btn-gold btn-lg" data-action="installApp">⬇️ Instalar o app no celular</button><div style="height:9px"></div>`:''}
+    <button class="btn btn-ghost" data-action="shareApp">📤 Compartilhar o app</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-go="players">👤 Jogadores ${S.players.length?`(${S.players.length})`:''}</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-go="config">⚙️ Tema, rodadas e tempo</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-go="intro">❓ Como funciona</button>
+    <div class="sec-label">Como funciona o placar</div>
+    <div class="note imp">Quando o <b style="color:#ff8298">impostor vence</b> (não é descoberto), ele leva <b>+2</b>. Quando a <b style="color:var(--lime)">cidade vence</b>, cada inocente leva <b>+1</b>. Os pontos somam por jogador a noite inteira — no fim sai o campeão. A noite fica salva no aparelho.</div>
+  </div>`;
 }
 
-async function montarCategorias(themeId) {
-  if (!themeId) return CATEGORIAS_PADRAO;
-  const { data, error } = await supabase.from('themes').select('label, game_ids').eq('id', themeId).contains('game_ids', ['stop']).single();
-  if (error || !data) return CATEGORIAS_PADRAO;
-  return [...CATEGORIAS_PADRAO.slice(0, 6), data.label];
+function viewPlayers(){
+  const list=S.players.map((p,i)=>`
+    <div class="prow">
+      <div class="pnum">${i+1}</div>
+      <div class="pn">${esc(p.name)}</div>
+      <button class="xbtn" data-rm="${i}">✕</button>
+    </div>`).join('');
+  return `${bar()}
+  <div class="screen">
+    <h1 style="font-size:clamp(28px,9vw,34px);margin-top:6px">Jogadores</h1>
+    <p class="muted" style="margin:8px 0 18px">Adicione todos que vão jogar. O anfitrião dos jogos de regra é sorteado desta lista.</p>
+    <div class="pinput">
+      <input id="pname" placeholder="Nome do jogador" autocomplete="off" maxlength="18">
+      <button class="btn btn-lime btn-sm" data-action="addP" style="padding:14px 18px">Add</button>
+    </div>
+    <div class="plist">${list||'<p class="faint center" style="padding:20px">Ninguém ainda. Bora adicionar.</p>'}</div>
+    <div class="spacer"></div>
+    ${S.players.length>=2?'<button class="btn btn-lime btn-lg" data-action="toPlay">Pronto, vamos jogar ▶</button>':'<p class="faint center">Mínimo 2 jogadores (a maioria dos jogos pede 3+).</p>'}
+  </div>`;
 }
 
-async function startStopRound(roomId, roundNumber, themeId = null) {
-  const categorias = await montarCategorias(themeId);
-  const letra = sortearLetra();
-  const { data, error } = await supabase
-    .from('stop_rounds')
-    .insert({ room_id: roomId, round_number: roundNumber, letter: letra, categories: categorias, started_at: new Date().toISOString() })
-    .select().single();
-  if (error) throw error;
-  return data;
+function viewConfig(){
+  const presets=Object.entries(THEMES).map(([k,v])=>`<div class="chip ${S.theme===k?'on':''}" data-theme="${k}">${v.label}</div>`).join('');
+  const customChip=`<div class="chip ${S.theme==='custom'?'on':''}" data-theme="custom">✏️ Meu tema (${S.customWords.length})</div>`;
+  const cwChips=S.customWords.map((w,i)=>`<div class="chip rm" data-rmcw="${i}">${esc(w)} ✕</div>`).join('');
+  return `${bar()}
+  <div class="screen">
+    <h1 style="font-size:clamp(28px,9vw,34px);margin-top:6px">Ajustes</h1>
+    <div class="sec-label">Tema das palavras</div>
+    <p class="muted" style="margin-bottom:12px;font-size:13px">Usado em Camaleão, Coordenada, 3 Pistas e Palavra Proibida.</p>
+    <div class="chips">${presets}${customChip}</div>
+    <div class="sec-label">Tema personalizado ✏️</div>
+    <p class="muted" style="margin-bottom:11px;font-size:13px">Crie seu banco (piadas internas, nomes do grupo...). Separe por vírgula. Mín. 3 palavras.</p>
+    <div class="pinput">
+      <input id="cword" placeholder="Ex: Zé, Maria, churrasco do João..." autocomplete="off">
+      <button class="btn btn-lime btn-sm" data-action="addCW" style="padding:14px 16px">Add</button>
+    </div>
+    ${cwChips?`<div class="chips">${cwChips}</div>`:'<p class="faint" style="font-size:13px">Nenhuma palavra ainda.</p>'}
+    <div class="sec-label">Dica pro impostor</div>
+    <div class="chips">
+      <span class="chip ${S.impHint?'on':''}" data-action="impHintOn">Ligada</span>
+      <span class="chip ${!S.impHint?'on':''}" data-action="impHintOff">Desligada</span>
+    </div>
+    <p class="faint" style="font-size:12.5px;margin-top:6px">No Camaleão e no Duplo Impostor, o impostor recebe uma pista vaga do segredo (ex.: “amarelo”). Só ele vê.</p>
+    <div class="sec-label">Rodadas na noite</div>
+    <div class="stepper" style="max-width:190px">
+      <button data-step="rounds:-1">−</button><div class="val">${S.rounds}</div><button data-step="rounds:1">+</button>
+    </div>
+    <div class="sec-label">Tempo de discussão</div>
+    <div class="stepper" style="max-width:210px">
+      <button data-step="discuss:-30">−</button><div class="val">${fmt(S.discuss)}</div><button data-step="discuss:30">+</button>
+    </div>
+    <div class="spacer"></div><div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-go="play">Escolher jogo ▶</button>
+  </div>`;
 }
 
-async function pressStop(roundId, playerId) {
-  const { data, error } = await supabase
-    .from('stop_rounds')
-    .update({ stopped_by: playerId, stopped_at: new Date().toISOString() })
-    .eq('id', roundId).is('stopped_at', null)
-    .select().single();
-  if (error) throw error;
-  if (!data) throw new Error('Alguém já apertou Stop antes de você.');
-  return data;
+function viewPlay(){
+  if(S.players.length<2){
+    return `${bar()}<div class="screen center" style="justify-content:center">
+      <div class="big-emoji">👤</div>
+      <h1 style="font-size:26px;margin:14px 0">Faltam jogadores</h1>
+      <p class="muted" style="margin-bottom:20px">Adicione pelo menos 2 (a maioria dos jogos pede 3).</p>
+      <button class="btn btn-lime btn-lg" data-go="players">Adicionar jogadores</button>
+    </div>`;
+  }
+  const tile=g=>{
+    const ok=playable(g); const [cls,lbl]=FAM_TAG[g.fam];
+    return `<div class="tile ${ok?'':'disabled'}" data-game="${g.id}">
+      <div class="emoji">${g.emoji}</div>
+      <div class="tname">${g.name}</div>
+      <div class="tdesc">${g.desc}</div>
+      <div class="tag ${cls}">${lbl} · ${g.min}–${g.max>=99?'∞':g.max}</div>
+      ${ok?'':`<div class="tdesc" style="color:var(--red);margin-top:6px">precisa ${g.min}–${g.max>=99?'∞':g.max} jog.</div>`}
+    </div>`;
+  };
+  const n=S.players.length;
+  const ready=GAMES.filter(playable);
+  const locked=GAMES.filter(g=>!playable(g));
+  const readyTiles=ready.map(tile).join('');
+  const lockedTiles=locked.map(tile).join('');
+  return `${bar()}
+  <div class="screen">
+    <div class="row" style="margin:6px 0 4px">
+      <h1 style="font-size:clamp(24px,8vw,30px)" class="grow">Rodada ${S.currentRound}<span class="faint" style="font-size:18px">/${S.rounds}</span></h1>
+      <div class="pill" data-go="config">⚙️ ${themeLabel().split(' ')[0]}</div>
+    </div>
+    <button class="btn btn-red btn-lg" data-action="sortear">🎲 Sortear um jogo</button>
+    <div class="sec-label">${ready.length} ${ready.length===1?'jogo':'jogos'} pra ${n} ${n===1?'jogador':'jogadores'}</div>
+    <div class="grid">${readyTiles}</div>
+    ${locked.length?`<div class="sec-label" style="opacity:.7">Precisam de outro número de gente</div>
+    <div class="grid" style="opacity:.5">${lockedTiles}</div>`:''}
+  </div>`;
 }
 
-async function submitAnswer(roundId, playerId, category, answer) {
-  const { data, error } = await supabase
-    .from('stop_answers')
-    .upsert({ round_id: roundId, player_id: playerId, category, answer }, { onConflict: 'round_id,player_id,category' })
-    .select().single();
-  if (error) throw error;
-  return data;
+function viewBriefing(){
+  const g=S.game;const [cls,lbl]=FAM_TAG[g.fam];
+  return `${bar()}
+  <div class="screen stagger">
+    <div class="center" style="margin:18px 0 6px"><div class="big-emoji">${g.emoji}</div></div>
+    <h1 class="center" style="font-size:clamp(26px,9vw,34px)">${g.name}</h1>
+    <div class="center"><span class="tag ${cls}">${lbl}</span></div>
+    <div class="card" style="margin-top:18px">
+      <div class="kicker" style="margin-bottom:8px">Como jogar</div>
+      <p style="line-height:1.6;font-size:15px">${g.rules}</p>
+    </div>
+    ${g.theme?`<div class="note" style="margin-top:12px">Tema atual: <b style="color:var(--text)">${themeLabel()}</b> · troque em ⚙️.</div>`:''}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="setupRound">Preparar rodada →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-go="play">← Trocar de jogo</button>
+  </div>`;
 }
 
-async function getRoundAnswers(roundId) {
-  const { data, error } = await supabase.from('stop_answers').select('*, room_players(nickname, avatar_emoji)').eq('round_id', roundId);
-  if (error) throw error;
-  return data;
+function viewReveal(){
+  const g=S.game,r=S.round,i=r.revealIdx,P=S.players;
+  if(i>=P.length){
+    if(g.id==='invertida'){
+      return `${bar()}<div class="screen stagger">
+        <div class="center" style="margin:8px 0"><div class="big-emoji">🔄</div></div>
+        <h1 class="center" style="font-size:clamp(22px,7vw,28px)">A pergunta da maioria era…</h1>
+        <div class="card" style="margin-top:14px;border-left:3px solid var(--lime)">
+          <p style="font-size:clamp(17px,5.5vw,21px);line-height:1.5;font-weight:700">${esc(r.pair[0])}</p>
+        </div>
+        <div class="note" style="margin-top:14px">Quem respondeu algo que NÃO combina com essa pergunta é o impostor (recebeu outra). Agora ele já sabe — e deve blefar pra não se entregar na discussão.</div>
+        <div class="spacer"></div>
+        <button class="btn btn-red btn-lg" data-action="toDiscuss" style="width:100%">Iniciar discussão ⏱</button>
+      </div>`;
+    }
+    return `${bar()}<div class="screen pass">
+      <div class="big-emoji">✅</div>
+      <h1 style="font-size:clamp(24px,8vw,30px)" class="center">Todos viram!</h1>
+      <p class="muted center">Agora discutam. ${g.fam==='imp'?'Achem o impostor.':'Ordenem o grupo.'}</p>
+      <button class="btn btn-red btn-lg" data-action="toDiscuss" style="width:100%">Iniciar discussão ⏱</button>
+    </div>`;
+  }
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Jogador ${i+1} de ${P.length}</div>
+    <h1 style="font-size:clamp(30px,10vw,38px)">${esc(P[i].name)}</h1>
+    <p class="muted">Pegue o celular. Toque para ver seu segredo — não deixe ninguém olhar.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flip">
+      <div class="big-emoji">👁️</div>
+      <div style="margin-top:10px;font-weight:700">Toque para revelar</div>
+    </div>
+  </div>`;
+}
+function cardInner(card){
+  if(card.q!==undefined){
+    return `<div class="kicker">${card.kicker||''}</div>
+      <div class="big" style="font-size:clamp(22px,7vw,30px);margin:14px 4px">${esc(card.q)}</div>
+      <p class="muted" style="font-size:13px">${card.sub||''}</p>`;
+  }
+  let listHtml='';
+  if(card.list){
+    listHtml=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin:14px 0;width:100%">`+
+      card.list.map((it,k)=>`<div style="font-size:14px;${(k+1)==card.num?'color:var(--lime);font-weight:700':'color:var(--muted)'}">${k+1}. ${esc(it)}</div>`).join('')+`</div>`;
+  }
+  const bigCls=card.type==='imp'?'imp':'cid';
+  return `<div class="kicker">${card.kicker||''}</div>
+    <div class="big ${bigCls}">${card.big}</div>
+    ${listHtml}
+    <p class="muted" style="font-size:13.5px;max-width:300px">${card.sub||''}</p>`;
 }
 
-async function voteAnswer(answerId, valido) {
-  const campo = valido ? 'votes_valid' : 'votes_invalid';
-  const { data: atual, error: fetchError } = await supabase.from('stop_answers').select(campo).eq('id', answerId).single();
-  if (fetchError) throw fetchError;
-  const { error } = await supabase.from('stop_answers').update({ [campo]: (atual[campo] || 0) + 1 }).eq('id', answerId);
-  if (error) throw error;
+function viewHostReveal(){
+  const r=S.round,host=S.players[r.host];
+  const scen=r.scenario?`<div class="card" style="margin:0 0 4px;border-left:3px solid var(--gold);text-align:left">
+      <div class="kicker" style="color:var(--gold)">Cenário desta rodada</div>
+      <b style="font-size:17px;display:block;margin-top:4px">${esc(r.scenario.name)}</b>
+      <p class="muted" style="font-size:13.5px;margin-top:4px">${esc(r.scenario.prompt)}</p>
+    </div>`:'';
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Anfitrião sorteado</div>
+    <h1 style="font-size:clamp(30px,11vw,40px)">${esc(host.name)}</h1>
+    ${scen}
+    <p class="muted">${esc(host.name)}, pegue o celular. Só você vê a regra secreta.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flipHost">
+      <div class="big-emoji">🤫</div>
+      <div style="margin-top:10px;font-weight:700">Toque para ver a regra</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="reHost">🎲 Outro anfitrião e nova regra</button>
+  </div>`;
 }
 
-async function finalizeVoting(answerId) {
-  const { data: answer, error: fetchError } = await supabase.from('stop_answers').select('votes_valid, votes_invalid').eq('id', answerId).single();
-  if (fetchError) throw fetchError;
-  const isValid = answer.votes_valid > answer.votes_invalid;
-  const { error } = await supabase.from('stop_answers').update({ is_valid: isValid }).eq('id', answerId);
-  if (error) throw error;
-  return isValid;
+function viewClueReveal(){
+  const r=S.round,cg=S.players[r.clueGiver];
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Quem dá as pistas</div>
+    <h1 style="font-size:clamp(28px,10vw,38px)">${esc(cg.name)}</h1>
+    <p class="muted">Só ${esc(cg.name)} vê o conceito. Dê 3 palavras como pista, uma de cada vez.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flipClue">
+      <div class="big-emoji">🧩</div>
+      <div style="margin-top:10px;font-weight:700">Toque para ver o conceito</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="reClue">🎲 Outro jogador</button>
+  </div>`;
 }
 
-function calcularPontuacao(respostas) {
-  const porCategoria = {};
-  respostas.forEach((r) => { (porCategoria[r.category] ||= []).push(r); });
-  const pontosPorJogador = {};
-  Object.values(porCategoria).forEach((grupo) => {
-    const validas = grupo.filter((r) => r.is_valid && r.answer?.trim());
-    const contagem = {};
-    validas.forEach((r) => { const c = r.answer.trim().toLowerCase(); contagem[c] = (contagem[c] || 0) + 1; });
-    validas.forEach((r) => {
-      const c = r.answer.trim().toLowerCase();
-      const pontos = contagem[c] === 1 ? 10 : 5;
-      pontosPorJogador[r.player_id] = (pontosPorJogador[r.player_id] || 0) + pontos;
+/* ----- ENTREVISTA INVERTIDA ----- */
+function viewEntrevistaReveal(){
+  const r=S.round, perf=S.players[r.performer];
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">No banco dos entrevistados</div>
+    <h1 style="font-size:clamp(28px,10vw,38px)">${esc(perf.name)}</h1>
+    <p class="muted">Só ${esc(perf.name)} pega o celular e vê o personagem secreto. Os outros vão entrevistar.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flipEntrevista">
+      <div class="big-emoji">🎭</div>
+      <div style="margin-top:10px;font-weight:700">Toque para ver seu personagem</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="reEntrevista">🎲 Outro entrevistado</button>
+  </div>`;
+}
+function viewEntrevistaQ(){
+  const r=S.round, perf=S.players[r.performer];
+  const qs=r.questions.map(q=>`<div class="prow"><div class="pn" style="font-size:14px">🎤 ${esc(q)}</div></div>`).join('');
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:6px 0"><div class="big-emoji">🎤</div></div>
+    <h1 class="center" style="font-size:clamp(22px,7vw,28px)">Entrevistem ${esc(perf.name)}</h1>
+    <p class="muted center" style="font-size:13.5px">Ele(a) responde SEM sair do personagem. Usem estas perguntas ou inventem as suas:</p>
+    <div class="plist" style="margin-top:12px">${qs}</div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toDiscuss">Iniciar entrevista ⏱</button>
+  </div>`;
+}
+
+/* ----- HISTÓRIA EM TURNOS ----- */
+function nextHistWord(){
+  const h=S.hist; let pool=HIST_WORDS;
+  if(h.used.length>=HIST_WORDS.length)h.used=[];
+  pool=HIST_WORDS.filter(w=>!h.used.includes(w));
+  const w=pool[rnd(pool.length)]; h.used.push(w); return w;
+}
+function initHistoria(){
+  S.hist={ order:shuffle(S.players.map((_,i)=>i)), pos:0, turn:1, used:[], word:'' };
+  S.hist.word=nextHistWord();
+}
+function viewHistTurn(){
+  const h=S.hist, P=S.players, cur=P[h.order[h.pos]];
+  return `${bar()}<div class="screen stagger">
+    <div class="kicker">Turno ${h.turn} · vez de</div>
+    <h1 style="font-size:clamp(26px,9vw,34px)">${esc(cur.name)}</h1>
+    <p class="muted" style="font-size:13.5px">Continue a história numa frase. Encaixe a palavra abaixo (natural ou zoada) antes do tempo acabar.</p>
+    <div class="reveal-card shown cidade" style="min-height:auto;margin:16px 0;padding:26px 20px">
+      <div class="kicker">Palavra obrigatória</div>
+      <div class="big cid" style="font-size:clamp(30px,11vw,44px);margin-top:6px">${esc(h.word)}</div>
+    </div>
+    <div class="center" style="font-size:30px;font-weight:800;font-variant-numeric:tabular-nums" id="htimer">0:15</div>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="histNext">Próximo jogador →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="histEnd">Encerrar história</button>
+  </div>`;
+}
+function viewHistResolve(){
+  const sel=S.hist&&S.hist.bestSel;
+  const opts=S.players.map((p,i)=>`<button class="btn ${sel===i?'btn-lime':'btn-ghost'}" data-action="histPick:${i}" style="margin-bottom:8px;width:100%">${sel===i?'✓ ':''}${esc(p.name)}</button>`).join('');
+  return `${bar()}<div class="screen">
+    <div class="center" style="margin:6px 0"><div class="big-emoji">📖</div></div>
+    <h1 class="center" style="font-size:clamp(22px,7vw,28px)">Fim da história!</h1>
+    <p class="muted center" style="margin:8px 0 14px">Opcional: o grupo dá +1 a quem se saiu melhor — mais criativo, mais engraçado. Ou sigam sem pontuar.</p>
+    ${opts}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="histAward" ${sel==null?'disabled':''}>+1 para o escolhido →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="histSkip">Sem pontos — próxima rodada →</button>
+  </div>`;
+}
+
+/* ----- QUEM É MAIS PROVÁVEL DE… ----- */
+function viewProvavel(){
+  const r=S.round;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:10px 0"><div class="big-emoji">👉</div></div>
+    <div class="kicker center">Quem é mais provável de…</div>
+    <div class="card" style="margin-top:12px;border-left:3px solid #ff8fc4">
+      <p style="font-size:clamp(18px,6vw,24px);line-height:1.45;font-weight:700">${esc(r.prompt)}</p>
+    </div>
+    <div class="note" style="margin-top:14px">Todos apontam ao mesmo tempo na contagem: <b>3… 2… 1… JÁ!</b> Olhem pra quem o grupo apontou.</div>
+    <div class="center" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-action="rerollPrompt">🎲 Outra pergunta</button></div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toProvavelResolve">Contar os votos →</button>
+  </div>`;
+}
+function viewProvavelResolve(){
+  const r=S.round, sel=r.provSel;
+  const opts=S.players.map((p,i)=>`<button class="btn ${sel===i?'btn-lime':'btn-ghost'}" data-action="provavelPick:${i}" style="margin-bottom:8px;width:100%">${sel===i?'✓ ':''}${esc(p.name)}</button>`).join('');
+  return `${bar()}<div class="screen">
+    <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">Quem recebeu mais dedos?</h1>
+    <p class="muted center" style="margin:6px 0 14px;font-size:13.5px">"${esc(r.prompt)}"</p>
+    ${opts}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="provavelAward" ${sel==null?'disabled':''}>Confirmar — +1 para o escolhido →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="provavelSkip">Deu empate / sem pontos →</button>
+  </div>`;
+}
+
+/* ----- DUAS VERDADES E UMA MENTIRA ----- */
+function viewVerdadesReveal(){
+  const r=S.round, t=S.players[r.teller];
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Quem vai contar</div>
+    <h1 style="font-size:clamp(28px,10vw,38px)">${esc(t.name)}</h1>
+    <p class="muted">Só ${esc(t.name)} toca e vê em que posição colocar a mentira. Os outros não olham.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flipVerdades">
+      <div class="big-emoji">🤥</div>
+      <div style="margin-top:10px;font-weight:700">Toque (só você)</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="reVerdades">🎲 Outro contador</button>
+  </div>`;
+}
+function viewVerdadesResolve(){
+  const r=S.round, gv=r.groupVote;
+  if(gv==null){
+    const btns=[1,2,3].map(n=>`<button class="btn btn-ghost btn-lg" data-action="verdadesVote:${n}" style="margin-bottom:10px;width:100%">Frase nº ${n}</button>`).join('');
+    return `${bar()}<div class="screen">
+      <div class="center" style="margin:6px 0"><div class="big-emoji">🤔</div></div>
+      <h1 class="center" style="font-size:clamp(22px,7vw,26px)">Em qual número o grupo votou?</h1>
+      <p class="muted center" style="font-size:13.5px;margin:8px 0 16px">A frase que vocês acham que é a mentira.</p>
+      ${btns}
+    </div>`;
+  }
+  const ok=gv===r.liePos;
+  return `${bar()}<div class="screen center">
+    <div class="big-emoji" style="margin:14px 0">${ok?'🎯':'🤥'}</div>
+    <h1 style="font-size:clamp(24px,8vw,30px);color:${ok?'var(--lime)':'var(--red)'}">${ok?'Acertaram!':'Foram enganados!'}</h1>
+    <p class="muted" style="margin:10px 0 4px">A mentira era a <b>frase nº ${r.liePos}</b>. O grupo votou na nº ${gv}.</p>
+    <p class="muted" style="font-size:14px">${ok?'O grupo todo leva +1.':`${esc(S.players[r.teller].name)} enganou todo mundo: +2.`}</p>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="verdadesNext">Continuar →</button>
+  </div>`;
+}
+
+/* ----- QUEM DISSE ISSO? ----- */
+function viewQuemdisseCollect(){
+  const r=S.round, i=r.collectIdx, P=S.players;
+  if(i>=P.length)return viewQuemdisseVote();
+  return `${bar()}<div class="screen">
+    <div class="kicker center">Resposta secreta · ${i+1} de ${P.length}</div>
+    <h1 class="center" style="font-size:clamp(24px,9vw,32px);margin-top:4px">${esc(P[i].name)}</h1>
+    <p class="muted center" style="font-size:13.5px">Passe o celular só pra ${esc(P[i].name)}. Digite sem ninguém ver.</p>
+    <div class="card" style="margin:14px 0;border-left:3px solid #ff8fc4">
+      <p style="font-size:clamp(16px,5vw,19px);line-height:1.45;font-weight:700">${esc(r.prompt)}</p>
+    </div>
+    <input id="qans" placeholder="Sua resposta…" autocomplete="off" maxlength="80" style="width:100%;box-sizing:border-box">
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="quemdisseSubmit">Pronto, próximo →</button>
+  </div>`;
+}
+function viewQuemdisseVote(){
+  const r=S.round;
+  const opts=r.shuffled.map((a,k)=>`<button class="btn ${r.qsel===k?'btn-lime':'btn-ghost'}" data-action="qdPick:${k}" style="margin-bottom:8px;width:100%;text-align:left;white-space:normal;line-height:1.35;height:auto;padding:14px 16px">${r.qsel===k?'✓ ':''}${esc(a.text)}</button>`).join('');
+  return `${bar()}<div class="screen">
+    <h1 style="font-size:clamp(20px,6.5vw,24px);margin-top:8px" class="center">Votem na melhor resposta</h1>
+    <p class="muted center" style="font-size:13px;margin:6px 0 14px">"${esc(r.prompt)}"</p>
+    ${opts}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="qdAward" ${r.qsel==null?'disabled':''}>Coroar essa resposta →</button>
+  </div>`;
+}
+function viewQuemdisseResult(){
+  const r=S.round, a=r.shuffled[r.qsel];
+  return `${bar()}<div class="screen center">
+    <div class="big-emoji" style="margin:14px 0">🏆</div>
+    <div class="kicker">Resposta vencedora</div>
+    <div class="card" style="margin:12px 0;border-left:3px solid var(--gold);text-align:left">
+      <p style="font-size:clamp(16px,5vw,19px);line-height:1.4">${esc(a.text)}</p>
+    </div>
+    <h1 style="font-size:clamp(24px,8vw,30px);color:var(--gold)">${esc(S.players[a.by].name)}</h1>
+    <p class="muted" style="margin-top:6px">+1 ponto 🎉</p>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="qdNext">Continuar →</button>
+  </div>`;
+}
+
+/* ----- PALAVRA PROIBIDA ----- */
+function viewProibidaReveal(){
+  const r=S.round, cg=S.players[r.clueGiver];
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Quem descreve</div>
+    <h1 style="font-size:clamp(28px,10vw,38px)">${esc(cg.name)}</h1>
+    <p class="muted">Só ${esc(cg.name)} vê a palavra e as proibidas. Toque para revelar.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="flipProibida">
+      <div class="big-emoji">🚫</div>
+      <div style="margin-top:10px;font-weight:700">Toque para ver sua palavra</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="reProibida">🎲 Outro jogador</button>
+  </div>`;
+}
+
+/* ----- VERDADES SILENCIOSAS ----- */
+function viewSilenciosas(){
+  const r=S.round;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:10px 0"><div class="big-emoji">🕯️</div></div>
+    <div class="kicker center" style="color:#ff7aa0">Verdade silenciosa</div>
+    <div class="card" style="margin-top:14px;border-left:3px solid #ff7aa0">
+      <p style="font-size:clamp(18px,6vw,24px);line-height:1.5;font-weight:700">${esc(r.prompt)}</p>
+    </div>
+    <div class="note" style="margin-top:14px">Cada um responde no seu tempo, em voz alta. Sem pressa, sem julgamento. Quem quiser, pode passar — mas o jogo é melhor quando você encara.</div>
+    <div class="center" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-action="rerollPrompt">🎲 Outra pergunta</button></div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toSilenciosasResolve">Todos responderam →</button>
+  </div>`;
+}
+function viewSilenciosasResolve(){
+  const r=S.round, sel=r.silSel;
+  const opts=S.players.map((p,i)=>`<button class="btn ${sel===i?'btn-lime':'btn-ghost'}" data-action="silPick:${i}" style="margin-bottom:8px;width:100%">${sel===i?'✓ ':''}${esc(p.name)}</button>`).join('');
+  return `${bar()}<div class="screen">
+    <h1 style="font-size:clamp(20px,6.5vw,25px);margin-top:10px" class="center">Quem ficou mais abalado?</h1>
+    <p class="muted center" style="font-size:13px;margin:6px 0 14px">Quem a pergunta pegou mais fundo leva +1. Opcional.</p>
+    ${opts}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="silAward" ${sel==null?'disabled':''}>+1 para o escolhido →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="silSkip">Foi só reflexão — sem pontos →</button>
+  </div>`;
+}
+
+/* ----- MOMENTOS QUENTES ----- */
+function viewQuentes(){
+  const r=S.round;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:10px 0"><div class="big-emoji">🔥</div></div>
+    <div class="kicker center" style="color:#ff7aa0">Momento quente</div>
+    <div class="card" style="margin-top:12px;border-left:3px solid #ff7aa0">
+      <p style="font-size:clamp(18px,6vw,24px);line-height:1.45;font-weight:700">${esc(r.prompt)}</p>
+    </div>
+    <div class="note" style="margin-top:14px">Todos apontam ao mesmo tempo na contagem: <b>3… 2… 1… JÁ!</b></div>
+    <div class="center" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-action="rerollPrompt">🎲 Outra pergunta</button></div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toQuentesResolve">Contar os votos →</button>
+  </div>`;
+}
+function viewQuentesResolve(){
+  const r=S.round, sel=r.qtSel;
+  const opts=S.players.map((p,i)=>`<button class="btn ${sel===i?'btn-lime':'btn-ghost'}" data-action="qtPick:${i}" style="margin-bottom:8px;width:100%">${sel===i?'✓ ':''}${esc(p.name)}</button>`).join('');
+  return `${bar()}<div class="screen">
+    <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">Quem recebeu mais dedos?</h1>
+    <p class="muted center" style="margin:6px 0 14px;font-size:13px">"${esc(r.prompt)}"</p>
+    ${opts}
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="qtAward" ${sel==null?'disabled':''}>Confirmar — +1 →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="qtSkip">Deu empate / sem pontos →</button>
+  </div>`;
+}
+
+function viewDebate(){
+  const d=S.round.debate, sp=d.split;
+  let body;
+  if(sp){
+    const col=(label,list,color)=>`<div class="card" style="flex:1;min-width:0;border-left:3px solid ${color};padding:13px 12px">
+      <div class="kicker" style="color:${color};margin-bottom:8px">${label}</div>
+      ${list.map(i=>`<div style="font-weight:700;font-size:14px;padding:3px 0">${esc(S.players[i].name)}</div>`).join('')||'<div class="faint" style="font-size:13px">—</div>'}
+    </div>`;
+    body=`<div class="note" style="margin-top:14px">Cada lado defende seu time com tudo. O lado que vencer o debate, <b>todos do time levam +1</b>.</div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      ${col(sp.aLabel,sp.a,'var(--red)')}
+      ${col(sp.bLabel,sp.b,'#8ec0ff')}
+    </div>`;
+  } else {
+    body=`<div class="note" style="margin-top:14px">Cada um escolhe um lado e defende. Opcional: +1 ao melhor argumento no fim.</div>`;
+  }
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:16px 0"><div class="big-emoji">${S.game.emoji}</div></div>
+    <h1 class="center" style="font-size:clamp(24px,8vw,30px)">${d.head}</h1>
+    <div class="card" style="margin-top:16px;border-left:3px solid var(--gold)">
+      <p style="font-size:clamp(16px,5vw,19px);line-height:1.55">${esc(d.text)}</p>
+    </div>
+    ${body}
+    <div class="center" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-action="rerollPrompt">🎲 Outro tema${sp?' (mantém os times)':''}</button></div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toDiscuss">Debater ⏱</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="finishNoScore">Pular pontuação e seguir →</button>
+  </div>`;
+}
+
+let timerInt=null, wakeLock=null;
+let histInt=null;
+function histTickStart(){
+  clearInterval(histInt);
+  const dur=15, endAt=Date.now()+dur*1000;
+  const upd=()=>{
+    if(S.screen!=='histTurn'){clearInterval(histInt);return;}
+    const left=Math.max(0,Math.ceil((endAt-Date.now())/1000));
+    const el=$('#htimer');
+    if(el){ el.textContent=fmt(left); el.style.color = left<=5&&left>0 ? 'var(--gold)' : (left<=0?'var(--red)':''); }
+    if(left<=0){clearInterval(histInt);if(el)el.textContent='Tempo!';if(navigator.vibrate)navigator.vibrate(150);}
+  };
+  upd(); histInt=setInterval(upd,250);
+}
+async function requestWake(){try{if('wakeLock'in navigator){wakeLock=await navigator.wakeLock.request('screen');}}catch(e){}}
+function releaseWake(){try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}}
+function beep(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const a=new A();const o=a.createOscillator();const g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.001,a.currentTime);g.gain.exponentialRampToValueAtTime(.25,a.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.6);o.start();o.stop(a.currentTime+.65);setTimeout(()=>a.close(),800);}catch(e){}}
+function viewDiscuss(){
+  const left=S.round.timeLeft;
+  return `${bar()}<div class="screen center">
+    <div class="kicker" style="margin-top:14px">${S.game.fam==='imp'?'Discussão — achem o impostor':'Discussão'}</div>
+    <div class="timer-wrap"><div class="timer ${left<=15&&left>0?'warn':''}" id="timer">${fmt(left)}</div></div>
+    <div class="row" style="gap:9px">
+      <button class="btn btn-ghost grow" data-action="timerToggle" id="ttg">${S.round.paused?'▶ Continuar':'⏸ Pausar'}</button>
+      <button class="btn btn-ghost grow" data-action="addTime">+30s</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="toResolve">Encerrar e resolver →</button>
+  </div>`;
+}
+function tickStart(){
+  clearInterval(timerInt); requestWake();
+  timerInt=setInterval(()=>{
+    if(S.screen!=='discuss'){clearInterval(timerInt);releaseWake();return;}
+    if(S.round.paused)return;
+    const left=Math.max(0,Math.ceil((S.round.endAt-Date.now())/1000));
+    S.round.timeLeft=left;
+    const el=$('#timer');
+    if(el){el.textContent=fmt(left);el.classList.toggle('warn',left<=15&&left>0);}
+    if(left<=0){clearInterval(timerInt);if(navigator.vibrate)navigator.vibrate([200,100,200]);beep();}
+  },250);
+}
+
+function viewResolve(){
+  const g=S.game,r=S.round;
+  if(g.fam==='imp'){
+    const impNames=r.impostors.map(i=>S.players[i].name).join(' e ');
+    let extra='';
+    if(g.id==='camaleao'||g.id==='duplo')extra=`O segredo era <b style="color:var(--lime)">${esc(r.secretWord)}</b>.`;
+    if(g.id==='coordenada')extra=`Cidade no nº <b style="color:var(--lime)">${r.realN}</b>, impostor no nº <b style="color:var(--red)">${r.impN}</b>.`;
+    if(g.id==='invertida')extra=`Cidade: "${esc(r.pair[0])}" · Impostor: "${esc(r.pair[1])}".`;
+    return `${bar()}<div class="screen center">
+      <div class="kicker" style="margin-top:14px">Quem era?</div>
+      <div class="big-emoji" style="margin:14px 0">🕵️</div>
+      <h1 style="font-size:clamp(24px,8vw,30px);color:var(--red)">${esc(impNames)}</h1>
+      <p class="muted" style="margin:10px 0 4px">${r.impostors.length>1?'eram os impostores':'era o impostor'}</p>
+      <p class="muted" style="font-size:14px">${extra}</p>
+      <div class="sec-label">A cidade descobriu?</div>
+      <button class="btn btn-lime btn-lg" data-action="res:cidade">✅ Cidade venceu (+1 por inocente)</button>
+      <div style="height:10px"></div>
+      <button class="btn btn-red btn-lg" data-action="res:impostor">😈 Impostor escapou (+2)</button>
+    </div>`;
+  }
+  if(g.fam==='reg'){
+    const sel=r.regSel||[];
+    const opts=S.players.map((p,i)=>`<button class="btn ${sel.includes(i)?'btn-lime':'btn-ghost'}" data-action="regToggle:${i}" style="margin-bottom:8px">${sel.includes(i)?'✓ ':''}${esc(p.name)}</button>`).join('');
+    return `${bar()}<div class="screen">
+      <h1 style="font-size:clamp(24px,8vw,28px);margin-top:10px" class="center">A regra era:</h1>
+      <div class="note" style="margin:14px 0">${r.secret||g.secret||''}</div>
+      <div class="sec-label">Quem descobriu? (marque todos que acertaram)</div>
+      ${opts}
+      <div class="spacer"></div>
+      <button class="btn btn-lime btn-lg" data-action="regConfirm" ${sel.length?'':'disabled'}>Confirmar — +1 para ${sel.length} jogador${sel.length===1?'':'es'} →</button>
+      <div style="height:9px"></div>
+      <button class="btn btn-red" data-action="res:reg:host">Ninguém descobriu — anfitrião (${esc(S.players[r.host].name)}) +2</button>
+    </div>`;
+  }
+  if(g.id==='escala'){
+    const order=r.cards.map((c,i)=>({n:S.players[i].name,v:+c.big})).sort((a,b)=>a.v-b.v)
+      .map(o=>`<div class="prow"><div class="pn">${esc(o.n)}</div><div class="sp" style="font-size:18px;color:var(--lime)">${o.v}</div></div>`).join('');
+    return `${bar()}<div class="screen">
+      <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">Ordem real (menor → maior)</h1>
+      <p class="muted center" style="margin:6px 0 14px">${esc(r.prompt)}</p>
+      <div class="plist">${order}</div>
+      <div class="sec-label">O grupo acertou a ordem?</div>
+      <button class="btn btn-lime btn-lg" data-action="res:escala:1">✅ Acertaram (todos +1)</button>
+      <div style="height:9px"></div>
+      <button class="btn btn-ghost" data-action="res:escala:0">❌ Erraram (0 ponto)</button>
+    </div>`;
+  }
+  if(g.id==='pistas'){
+    const cg=S.players[r.clueGiver].name;
+    const opts=S.players.map((p,i)=>i===r.clueGiver?'':`<button class="btn btn-ghost" data-action="res:pistas:${i}" style="margin-bottom:8px">${esc(p.name)} acertou (+1 p/ ele e ${esc(cg)})</button>`).join('');
+    return `${bar()}<div class="screen">
+      <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">O conceito era:</h1>
+      <div class="reveal-card shown cidade" style="min-height:auto;margin:14px 0;padding:24px"><div class="big cid">${esc(r.concept)}</div></div>
+      <div class="sec-label">Alguém acertou?</div>
+      ${opts}
+      <button class="btn btn-red" data-action="res:pistas:none">Ninguém acertou (0 ponto)</button>
+    </div>`;
+  }
+  if(g.id==='proibida'){
+    const cg=S.players[r.clueGiver].name;
+    const opts=S.players.map((p,i)=>i===r.clueGiver?'':`<button class="btn btn-ghost" data-action="res:proibida:${i}" style="margin-bottom:8px;width:100%">${esc(p.name)} adivinhou (+1 p/ ele e ${esc(cg)})</button>`).join('');
+    return `${bar()}<div class="screen">
+      <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">A palavra era:</h1>
+      <div class="reveal-card shown cidade" style="min-height:auto;margin:14px 0;padding:24px"><div class="big cid">${esc(r.taboo.word)}</div></div>
+      <div class="sec-label">Quem adivinhou?</div>
+      ${opts}
+      <button class="btn btn-red" data-action="res:proibida:none">Ninguém / o descritor falou proibida (0)</button>
+    </div>`;
+  }
+  if(g.id==='entrevista'){
+    const perf=S.players[r.performer];
+    return `${bar()}<div class="screen center">
+      <div class="kicker" style="margin-top:14px">O personagem era</div>
+      <div class="reveal-card shown cidade" style="min-height:auto;margin:14px 0;padding:22px"><div class="big cid" style="font-size:clamp(20px,6.5vw,28px)">${esc(r.character)}</div></div>
+      <p class="muted" style="font-size:14px">${esc(perf.name)} se manteve no personagem?</p>
+      <div class="sec-label">Decidam juntos</div>
+      <button class="btn btn-lime btn-lg" data-action="res:entrevista:1">😎 Mandou bem (+1 pra ${esc(perf.name)})</button>
+      <div style="height:10px"></div>
+      <button class="btn btn-ghost btn-lg" data-action="res:entrevista:0">😬 Quebrou o personagem (0)</button>
+    </div>`;
+  }
+  if(g.fam==='deb'){
+    const sp=r.debate&&r.debate.split;
+    if(sp){
+      const names=list=>list.map(i=>esc(S.players[i].name)).join(', ');
+      return `${bar()}<div class="screen">
+        <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">Qual lado venceu o debate?</h1>
+        <p class="muted center" style="margin:8px 0 16px;font-size:13.5px">O time vencedor leva +1 pra cada um. Decidam juntos quem defendeu melhor.</p>
+        <button class="btn btn-red btn-lg" data-action="debSide:a" style="height:auto;padding:15px;white-space:normal">${sp.aLabel} venceu<br><span style="font-weight:400;font-size:12.5px;opacity:.85">${names(sp.a)} · +1 cada</span></button>
+        <div style="height:10px"></div>
+        <button class="btn btn-lg" data-action="debSide:b" style="height:auto;padding:15px;white-space:normal;background:#8ec0ff;color:#0a1626">${sp.bLabel} venceu<br><span style="font-weight:400;font-size:12.5px;opacity:.85">${names(sp.b)} · +1 cada</span></button>
+        <div style="height:10px"></div>
+        <button class="btn btn-ghost" data-action="finishNoScore">Empate / sem pontos →</button>
+      </div>`;
+    }
+    const sel=r.debSel;
+    const opts=S.players.map((p,i)=>`<button class="btn ${sel===i?'btn-lime':'btn-ghost'}" data-action="debPick:${i}" style="margin-bottom:8px;width:100%">${sel===i?'✓ ':''}${esc(p.name)}</button>`).join('');
+    return `${bar()}<div class="screen">
+      <h1 style="font-size:clamp(22px,7vw,26px);margin-top:10px" class="center">Melhor argumento?</h1>
+      <p class="muted center" style="margin:8px 0 14px">Debate não tem certo ou errado. Opcional: o grupo dá +1 a quem defendeu melhor — ou sigam sem pontuar.</p>
+      ${opts}
+      <div class="spacer"></div>
+      <button class="btn btn-lime btn-lg" data-action="debAward" ${sel==null?'disabled':''}>+1 para o escolhido →</button>
+      <div style="height:9px"></div>
+      <button class="btn btn-ghost" data-action="finishNoScore">Sem pontos — próxima rodada →</button>
+    </div>`;
+  }
+  return '';
+}
+
+function viewScoreboard(){
+  const sorted=[...S.players].map((p,i)=>({...p,i})).sort((a,b)=>b.score-a.score);
+  const rows=sorted.map((p,k)=>`
+    <div class="srow ${k===0&&p.score>0?'top1':''}">
+      <div class="rank">${k===0&&p.score>0?'👑':k+1}</div>
+      <div class="sn">${esc(p.name)}</div>
+      <div class="sp">${p.score}</div>
+    </div>`).join('');
+  return `${bar()}<div class="screen">
+    <h1 style="font-size:clamp(26px,9vw,32px);margin-top:6px">Placar</h1>
+    <p class="muted" style="margin:8px 0 18px">Rodada ${S.currentRound} de ${S.rounds}.</p>
+    ${rows||'<p class="faint center" style="padding:30px">Sem jogadores ainda.</p>'}
+    <div class="spacer"></div>
+    <button class="btn btn-ghost" data-go="${S.returnTo||(S.game?'play':'home')}">← Voltar</button>
+  </div>`;
+}
+
+function nightStatsRows(){
+  const st=S.stats||{games:{},rounds:0};
+  const entries=Object.entries(st.games||{});
+  const anyImp=S.players.some(p=>(p.impTimes||0)>0);
+  const rows=[];
+  if(!entries.length && !anyImp)return rows;
+  const totalRounds=st.rounds||entries.reduce((a,[,c])=>a+c,0);
+  rows.push(['🎲','Rodadas jogadas', String(totalRounds)]);
+  if(entries.length){
+    const sorted=[...entries].sort((a,b)=>b[1]-a[1]);
+    const [gid,cnt]=sorted[0];
+    const g=GAMES.find(x=>x.id===gid);
+    rows.push([g?g.emoji:'🎮','Jogo da noite', `${g?g.name:gid} · ${cnt}×`]);
+    rows.push(['🗂️','Jogos diferentes', String(entries.length)]);
+  }
+  const imp=S.players.map(p=>({n:p.name,c:p.impTimes||0})).filter(p=>p.c>0).sort((a,b)=>b.c-a.c);
+  if(imp.length){
+    const t=imp[0].c, who=imp.filter(p=>p.c===t).map(p=>p.n).join(' & ');
+    rows.push(['🕵️','O mais suspeito', `${who} · ${t}× impostor`]);
+  }
+  return rows;
+}
+function nightStatsHTML(){
+  const rows=nightStatsRows();
+  if(!rows.length)return '';
+  const body=rows.map(([e,k,v])=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">
+    <div style="font-size:20px;line-height:1">${e}</div>
+    <div style="flex:1;font-size:13px;color:var(--muted)">${k}</div>
+    <div style="font-size:14px;font-weight:700;text-align:right">${esc(v)}</div>
+  </div>`).join('');
+  return `<div class="sec-label" style="margin:24px 0 10px">📊 A noite em números</div>${body}`;
+}
+
+/* ---- imagem do placar (canvas, sem dependências) ---- */
+function rr(ctx,x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);}else{ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}}
+async function shareScoreImage(){
+  try{ if(document.fonts&&document.fonts.ready)await document.fonts.ready; }catch(e){}
+  const C={bg:'#0e0e14',surf:'#16161f',line:'rgba(255,255,255,.09)',lime:'#c6f24e',gold:'#ffcb45',red:'#ff3b5c',text:'#f4f1ea',muted:'#8c8ca0'};
+  const HEAD="'Bricolage Grotesque','Sora',sans-serif", BODY="'Sora',system-ui,sans-serif";
+  const sorted=[...S.players].map(p=>({name:p.name,score:p.score})).sort((a,b)=>b.score-a.score);
+  const topScore=sorted[0]?sorted[0].score:0;
+  const stats=nightStatsRows();
+  const W=1080, PAD=64, rowH=96, statH=88;
+  const headerH=470, rankH=sorted.length*rowH+24;
+  const statsH=stats.length?(stats.length*statH+96):0;
+  const footerH=150;
+  const H=PAD+headerH+rankH+statsH+footerH;
+  const S2=2, cv=document.createElement('canvas'); cv.width=W*S2; cv.height=H*S2;
+  const x=cv.getContext('2d'); x.scale(S2,S2);
+  // bg
+  x.fillStyle=C.bg; x.fillRect(0,0,W,H);
+  // confetti
+  const cc=[C.red,C.gold,C.lime,'#8ec0ff']; let sd=9;
+  const rndf=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
+  for(let i=0;i<34;i++){const px=rndf()*W,py=rndf()*H,a=rndf()*Math.PI;x.save();x.translate(px,py);x.rotate(a);x.globalAlpha=.22;x.fillStyle=cc[i%4];x.fillRect(0,0,18+rndf()*16,7);x.restore();}
+  x.globalAlpha=1; x.textAlign='center';
+  let y=PAD+54;
+  x.fillStyle=C.muted; x.font=`700 26px ${BODY}`; x.fillText('CAMPEÃO DA NOITE', W/2, y);
+  y+=86; x.font=`88px ${BODY}`; x.fillText('🏆', W/2, y);
+  // champ name (shrink to fit)
+  const champ=(sorted.filter(p=>p.score===topScore&&topScore>0).map(p=>p.name).join(' & '))||(sorted[0]?sorted[0].name:'—');
+  y+=104; let fs=78; x.fillStyle=C.gold; do{x.font=`800 ${fs}px ${HEAD}`; if(x.measureText(champ).width<=W-2*PAD)break; fs-=4;}while(fs>34);
+  x.fillText(champ, W/2, y);
+  y+=58; x.fillStyle=C.muted; x.font=`600 32px ${BODY}`; x.fillText(`${topScore} ${topScore===1?'ponto':'pontos'}`, W/2, y);
+  // ranking
+  y+=70;
+  sorted.forEach((p,i)=>{
+    rr(x,PAD,y,W-2*PAD,rowH-16,18); x.fillStyle=C.surf; x.fill(); x.strokeStyle=C.line; x.lineWidth=2; x.stroke();
+    const cy=y+(rowH-16)/2;
+    x.textAlign='left'; x.textBaseline='middle';
+    const isTop=p.score===topScore&&topScore>0;
+    x.font=`800 34px ${HEAD}`; x.fillStyle=isTop?C.gold:C.muted;
+    x.fillText(isTop?'👑':String(i+1), PAD+30, cy);
+    x.fillStyle=C.text; x.font=`700 38px ${BODY}`;
+    let nm=p.name; while(x.measureText(nm).width>W-2*PAD-260&&nm.length>3){nm=nm.slice(0,-1);} if(nm!==p.name)nm+='…';
+    x.fillText(nm, PAD+110, cy);
+    x.textAlign='right'; x.fillStyle=isTop?C.lime:C.text; x.font=`800 40px ${HEAD}`;
+    x.fillText(String(p.score), W-PAD-30, cy);
+    x.textAlign='left'; x.textBaseline='alphabetic';
+    y+=rowH;
+  });
+  // stats
+  if(stats.length){
+    y+=34; x.textAlign='left'; x.fillStyle=C.muted; x.font=`700 24px ${BODY}`;
+    x.fillText('📊 A NOITE EM NÚMEROS', PAD, y); y+=34;
+    stats.forEach(([e,k,v])=>{
+      rr(x,PAD,y,W-2*PAD,statH-14,16); x.fillStyle=C.surf; x.fill(); x.strokeStyle=C.line; x.lineWidth=2; x.stroke();
+      const cy=y+(statH-14)/2; x.textBaseline='middle';
+      x.font=`34px ${BODY}`; x.textAlign='left'; x.fillStyle=C.text; x.fillText(e, PAD+26, cy);
+      x.font=`500 28px ${BODY}`; x.fillStyle=C.muted; x.fillText(k, PAD+86, cy);
+      x.textAlign='right'; x.font=`700 30px ${BODY}`; x.fillStyle=C.text;
+      let vv=v; while(x.measureText(vv).width>W-2*PAD-360&&vv.length>4){vv=vv.slice(0,-1);} if(vv!==v)vv+='…';
+      x.fillText(vv, W-PAD-26, cy);
+      x.textAlign='left'; x.textBaseline='alphabetic'; y+=statH;
     });
-  });
-  return pontosPorJogador;
+  }
+  // footer
+  x.textAlign='center'; x.textBaseline='middle';
+  const fy=H-footerH/2;
+  x.font=`800 34px ${HEAD}`; x.fillStyle=C.lime; x.fillText('🎲 Noite de Jogos', W/2, fy-16);
+  x.font=`500 24px ${BODY}`; x.fillStyle=C.muted; x.fillText('pdroaquin0.github.io/noite-de-jogos', W/2, fy+24);
+  // export
+  cv.toBlob(async(blob)=>{
+    if(!blob)return;
+    const file=new File([blob],'placar-noite-de-jogos.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:'Noite de Jogos',text:'Placar da nossa noite 🏆'}); }catch(e){}
+    }else{
+      const url=URL.createObjectURL(blob); const a=document.createElement('a');
+      a.href=url; a.download='placar-noite-de-jogos.png'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+    }
+  },'image/png');
+}
+function viewChampion(){
+  const sorted=[...S.players].map((p,i)=>({...p,i})).sort((a,b)=>b.score-a.score);
+  const top=sorted[0]?sorted[0].score:0;
+  const champs=sorted.filter(p=>p.score===top&&top>0);
+  const champName=champs.length>1?champs.map(c=>c.name).join(' & '):(sorted[0]?sorted[0].name:'—');
+  const skip=Math.max(1,champs.length);
+  const rows=sorted.slice(skip).map((p,k)=>`
+    <div class="srow"><div class="rank">${k+1+skip}</div><div class="sn">${esc(p.name)}</div><div class="sp">${p.score}</div></div>`).join('');
+  return `${bar()}<div class="screen center">
+    <div class="confetti" id="conf"></div>
+    <div class="kicker" style="margin-top:20px">${champs.length>1?'Empate no topo!':'Campeão da noite'}</div>
+    <div class="big-emoji" style="margin:16px 0;font-size:clamp(56px,18vw,70px)">🏆</div>
+    <h1 style="font-size:clamp(32px,11vw,46px);color:var(--gold)">${esc(champName)}</h1>
+    <p class="muted" style="margin:8px 0 24px">${top} pontos</p>
+    <div style="text-align:left">${rows}</div>
+    <div style="text-align:left">${nightStatsHTML()}</div>
+    <div class="spacer"></div>
+    <button class="btn btn-gold btn-lg" data-action="shareScore">📸 Salvar / compartilhar o placar</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-lime btn-lg" data-action="newNight">🔁 Nova noite (zerar placar)</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-action="moreRounds">➕ Jogar mais 3 rodadas</button>
+  </div>`;
 }
 
-// ============================================================
-// UI — TELA ENTRADA
-// ============================================================
-function mostrarErro(elId, msg) { const el = $(elId); el.textContent = msg; el.hidden = false; }
-function esconderErro(elId) { $(elId).hidden = true; }
+/* =========================================================
+   RENDER PRINCIPAL
+========================================================= */
+function render(){
+  let html='';
+  switch(S.screen){
+    case 'intro':html=viewIntro();break;
+    case 'home':html=viewHome();break;
+    case 'players':html=viewPlayers();break;
+    case 'config':html=viewConfig();break;
+    case 'play':html=viewPlay();break;
+    case 'briefing':html=viewBriefing();break;
+    case 'reveal':html=viewReveal();break;
+    case 'hostReveal':html=viewHostReveal();break;
+    case 'clueReveal':html=viewClueReveal();break;
+    case 'entrevistaReveal':html=viewEntrevistaReveal();break;
+    case 'entrevistaQ':html=viewEntrevistaQ();break;
+    case 'histTurn':html=viewHistTurn();break;
+    case 'histResolve':html=viewHistResolve();break;
+    case 'provavel':html=viewProvavel();break;
+    case 'provavelResolve':html=viewProvavelResolve();break;
+    case 'verdadesReveal':html=viewVerdadesReveal();break;
+    case 'verdadesResolve':html=viewVerdadesResolve();break;
+    case 'quemdisseCollect':html=viewQuemdisseCollect();break;
+    case 'quemdisseVote':html=viewQuemdisseVote();break;
+    case 'quemdisseResult':html=viewQuemdisseResult();break;
+    case 'proibidaReveal':html=viewProibidaReveal();break;
+    case 'silenciosas':html=viewSilenciosas();break;
+    case 'silenciosasResolve':html=viewSilenciosasResolve();break;
+    case 'quentes':html=viewQuentes();break;
+    case 'quentesResolve':html=viewQuentesResolve();break;
+    case 'debate':html=viewDebate();break;
+    case 'discuss':html=viewDiscuss();break;
+    case 'resolve':html=viewResolve();break;
+    case 'scoreboard':html=viewScoreboard();break;
+    case 'champion':html=viewChampion();break;
+    case 'mafSetup':html=viewMafSetup();break;
+    case 'mafDeal':html=viewMafDeal();break;
+    case 'mafNight':html=viewMafNight();break;
+    case 'mafTurn':html=viewMafTurn();break;
+    case 'mafDay':html=viewMafDay();break;
+    case 'mafVote':html=viewMafVote();break;
+    case 'mafVoteResult':html=viewMafVoteResult();break;
+    case 'mafOver':html=viewMafOver();break;
+  }
+  app.innerHTML=html;
+  document.body.classList.toggle('has-footer', ['home','intro','champion','scoreboard','players','config'].includes(S.screen));
+  if(S.screen==='discuss')tickStart();
+  if(S.screen==='histTurn')histTickStart();
+  if(S.screen==='players'){const inp=$('#pname');if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')addPlayer();};}}
+  if(S.screen==='quemdisseCollect'){const inp=$('#qans');if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')quemdisseSubmit();};}}
+  if(S.screen==='config'){const ci=$('#cword');if(ci){ci.onkeydown=e=>{if(e.key==='Enter')addCustom();};}}
+  if(S.screen==='champion'||S.screen==='mafOver')confetti();
+  save();
+}
 
-$('btn-entrar-sala').addEventListener('click', async () => {
-  esconderErro('erro-entrar-sala');
-  const codigo = $('input-codigo-sala').value.trim();
-  const nickname = $('input-nickname').value.trim();
-  if (!codigo || !nickname) { mostrarErro('erro-entrar-sala', 'Preenche o código e o apelido.'); return; }
+/* =========================================================
+   AÇÕES
+========================================================= */
+function addPlayer(){
+  const inp=$('#pname');if(!inp)return;
+  const name=inp.value.trim();if(!name)return;
+  S.players.push({name,score:0,impTimes:0});render();
+}
+function addCustom(){
+  const inp=$('#cword');if(!inp)return;
+  const parts=inp.value.split(/[,\n;]+/).map(s=>s.trim()).filter(Boolean);
+  if(!parts.length)return;
+  parts.forEach(w=>{if(!S.customWords.some(x=>x.toLowerCase()===w.toLowerCase()))S.customWords.push(w);});
+  render();
+}
+function quemdisseSubmit(){
+  const r=S.round, inp=$('#qans');
+  const txt=inp?inp.value.trim():'';
+  r.answers.push({by:r.collectIdx, text:txt||'(em branco)'});
+  r.collectIdx++;
+  if(r.collectIdx>=S.players.length){ r.shuffled=shuffle(r.answers); r.qsel=null; go('quemdisseVote'); }
+  else render();
+}
+function routeRoundStart(){
+  const g=S.game;
+  if(g.id==='mafia'){ initMafiaSetup(); go('mafSetup'); return; }
+  if(g.id==='historia'){ initHistoria(); go('histTurn'); return; }
+  buildRound();
+  if(g.id==='entrevista')go('entrevistaReveal');
+  else if(g.id==='provavel')go('provavel');
+  else if(g.id==='verdades')go('verdadesReveal');
+  else if(g.id==='quemdisse')go('quemdisseCollect');
+  else if(g.id==='proibida')go('proibidaReveal');
+  else if(g.id==='silenciosas')go('silenciosas');
+  else if(g.id==='quentes')go('quentes');
+  else if(g.fam==='imp'||g.id==='escala')go('reveal');
+  else if(g.fam==='reg')go('hostReveal');
+  else if(g.id==='pistas')go('clueReveal');
+  else if(g.fam==='deb')go('debate');
+}
+function setupRound(){
+  if(!S.stats)S.stats={games:{},rounds:0};
+  S.stats.games[S.game.id]=(S.stats.games[S.game.id]||0)+1;
+  S.stats.rounds=(S.stats.rounds||0)+1;
+  routeRoundStart();
+}
+function applyResolve(action){
+  const g=S.game,r=S.round;const parts=action.split(':');
+  if(g.fam==='imp'){
+    if(parts[1]==='cidade'){const inn=S.players.map((_,i)=>i).filter(i=>!r.impostors.includes(i));award(inn,1);}
+    else{award(r.impostors,2);}
+  } else if(g.fam==='reg'){
+    if(parts[2]==='host')award([r.host],2);
+  } else if(g.id==='escala'){
+    if(parts[2]==='1')award(S.players.map((_,i)=>i),1);
+  } else if(g.id==='pistas'){
+    if(parts[2]!=='none')award([+parts[2],r.clueGiver],1);
+  } else if(g.id==='proibida'){
+    if(parts[2]!=='none')award([+parts[2],r.clueGiver],1);
+  } else if(g.id==='entrevista'){
+    if(parts[2]==='1')award([r.performer],1);
+  }
+  nextRoundOrEnd();
+}
 
-  try {
-    const { room, player } = await joinRoom(codigo, nickname);
-    state.room = room; state.player = player;
-    abrirLobby();
-  } catch (err) {
-    mostrarErro('erro-entrar-sala', err.message);
+/* =========================================================
+   MÁFIA (modo autocontido — o celular é o narrador)
+========================================================= */
+function defaultMafia(n){ if(n<=6)return 1; if(n<=9)return 2; if(n<=12)return 3; return 4; }
+function mafCitizens(){ const m=S.maf; return m.n - m.mafiaCount - (m.detective?1:0) - (m.doctor?1:0); }
+function mafSetupValid(){ const m=S.maf; return m.mafiaCount>=1 && m.mafiaCount*2<m.n && mafCitizens()>=0; }
+function initMafiaSetup(){
+  const n=S.players.length;
+  S.maf={ n, mafiaCount:defaultMafia(n), detective:true, doctor:true,
+    roles:[], alive:[], night:1,
+    dealIdx:0, dealFlipped:false,
+    turnOrder:[], turnPos:0, turnRevealed:false, turnPick:null,
+    mafiaPicks:{}, doctorSave:null,
+    lastVictim:null, lastSaved:false, eliminated:null,
+    winner:null, scored:false };
+}
+function dealMafiaRoles(){
+  const m=S.maf, idx=S.players.map((_,i)=>i);
+  const order=shuffle(idx);
+  const roles=new Array(m.n).fill('cidadao');
+  let p=0;
+  for(let k=0;k<m.mafiaCount;k++)roles[order[p++]]='mafia';
+  if(m.detective)roles[order[p++]]='detective';
+  if(m.doctor)roles[order[p++]]='doctor';
+  m.roles=roles;
+  m.alive=new Array(m.n).fill(true);
+  m.dealIdx=0; m.dealFlipped=false;
+  go('mafDeal');
+}
+function roleName(r){ return r==='mafia'?'Máfia':r==='detective'?'Detetive':r==='doctor'?'Médico':'Cidadão'; }
+function mafCounts(){
+  const m=S.maf; let maf=0,city=0;
+  m.roles.forEach((r,i)=>{ if(!m.alive[i])return; if(r==='mafia')maf++; else city++; });
+  return {maf,city};
+}
+function checkWin(){
+  const {maf,city}=mafCounts();
+  if(maf===0)return 'cidade';
+  if(maf>=city)return 'mafia';
+  return null;
+}
+function resolveNight(){
+  const m=S.maf;
+  const tally={};
+  Object.values(m.mafiaPicks).forEach(t=>{ if(t!=null)tally[t]=(tally[t]||0)+1; });
+  let victim=null, best=-1, tied=[];
+  Object.keys(tally).forEach(k=>{ const v=tally[k]; if(v>best){best=v;tied=[+k];}else if(v===best)tied.push(+k); });
+  if(tied.length)victim=tied[rnd(tied.length)];
+  if(victim!=null && m.doctorSave===victim){ m.lastVictim=null; m.lastSaved=true; }
+  else if(victim!=null){ m.alive[victim]=false; m.lastVictim=victim; m.lastSaved=false; }
+  else { m.lastVictim=null; m.lastSaved=false; }
+  m.winner=checkWin();
+}
+function endMafia(){
+  const m=S.maf;
+  if(!m.scored){
+    const win=m.winner;
+    const idxs=S.players.map((_,i)=>i).filter(i=> win==='mafia' ? m.roles[i]==='mafia' : m.roles[i]!=='mafia');
+    award(idxs,2);
+    m.scored=true;
+  }
+  go('mafOver');
+}
+
+/* ----- VIEWS MÁFIA ----- */
+function viewMafSetup(){
+  const m=S.maf, valid=mafSetupValid(), cz=mafCitizens();
+  const chip=(on,label,act)=>`<button class="btn ${on?'btn-lime':'btn-ghost'} btn-sm" data-action="${act}" style="margin:0 6px 8px 0">${on?'✓ ':''}${label}</button>`;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:6px 0"><div class="big-emoji">🔪</div></div>
+    <h1 class="center" style="font-size:clamp(24px,8vw,30px)">Máfia · preparar</h1>
+    <p class="muted center">${m.n} jogadores nesta partida. O celular vai narrar tudo.</p>
+
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><b>Membros da Máfia</b><div class="faint" style="font-size:12px">Quanto mais máfia, mais difícil pra cidade.</div></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn btn-ghost btn-sm" data-action="mafCfg:mafia:-1" ${m.mafiaCount<=1?'disabled':''}>−</button>
+          <b style="font-size:20px;min-width:20px;text-align:center">${m.mafiaCount}</b>
+          <button class="btn btn-ghost btn-sm" data-action="mafCfg:mafia:1" ${m.mafiaCount*2>=m.n-1?'disabled':''}>＋</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <b>Papéis especiais</b>
+      <div style="margin-top:10px">
+        ${chip(m.detective,'🔎 Detetive','mafCfg:detective:0')}
+        ${chip(m.doctor,'🩺 Médico','mafCfg:doctor:0')}
+      </div>
+      <div class="faint" style="font-size:12px;margin-top:4px">Detetive investiga 1 por noite. Médico protege 1 por noite (pode ser ele mesmo).</div>
+    </div>
+
+    <div class="note" style="margin-top:14px">
+      Composição: <b>${m.mafiaCount}</b> máfia · ${m.detective?'1 detetive · ':''}${m.doctor?'1 médico · ':''}<b>${cz}</b> cidadão${cz===1?'':'s'}.
+      ${valid?'':'<br><span style="color:var(--red)">A máfia precisa ser minoria e sobrar gente pra cidade. Ajuste os números.</span>'}
+    </div>
+
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="mafDealRoles" ${valid?'':'disabled'}>Distribuir papéis →</button>
+  </div>`;
+}
+function viewMafDeal(){
+  const m=S.maf, i=m.dealIdx, P=S.players;
+  if(i>=P.length){
+    return `${bar()}<div class="screen pass">
+      <div class="big-emoji">🌙</div>
+      <h1 style="font-size:clamp(24px,8vw,30px)" class="center">Todos sabem quem são.</h1>
+      <p class="muted center">Guardem segredo. Quando estiverem prontos, a primeira noite começa.</p>
+      <button class="btn btn-red btn-lg" data-action="mafToNight" style="width:100%">Começar a noite 🌙</button>
+    </div>`;
+  }
+  return `${bar()}<div class="screen pass">
+    <div class="kicker">Papel ${i+1} de ${P.length}</div>
+    <h1 style="font-size:clamp(30px,10vw,38px)">${esc(P[i].name)}</h1>
+    <p class="muted">Pegue o celular. Toque para ver seu papel — só você.</p>
+    <div class="reveal-card hidden" id="rcard" data-action="mafDealFlip">
+      <div class="big-emoji">🎴</div>
+      <div style="margin-top:10px;font-weight:700">Toque para revelar</div>
+    </div>
+  </div>`;
+}
+function viewMafNight(){
+  const m=S.maf;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:10px 0"><div class="big-emoji">🌙</div></div>
+    <h1 class="center" style="font-size:clamp(26px,9vw,34px)">Noite ${m.night}</h1>
+    <p class="muted center">A cidade dorme. O celular vai passar por cada um que continua vivo. Quem não tem ação noturna recebe só uma tela de "durma" — finja agir, ninguém saberá.</p>
+    <div class="note" style="margin-top:14px">Passe o aparelho na ordem que aparecer. Não comente nada em voz alta durante a noite.</div>
+    <div class="spacer"></div>
+    <button class="btn btn-red btn-lg" data-action="mafStartTurns">Iniciar a noite 🌙</button>
+  </div>`;
+}
+function viewMafTurn(){
+  const m=S.maf, P=S.players;
+  if(m.turnPos>=m.turnOrder.length){ return viewMafDay(); }
+  const cur=m.turnOrder[m.turnPos], role=m.roles[cur];
+  if(!m.turnRevealed){
+    return `${bar()}<div class="screen pass">
+      <div class="kicker">Vez ${m.turnPos+1} de ${m.turnOrder.length}</div>
+      <h1 style="font-size:clamp(30px,10vw,38px)">${esc(P[cur].name)}</h1>
+      <p class="muted">Pegue o celular sozinho. Toque para ver sua ação da noite.</p>
+      <div class="reveal-card hidden" id="rcard" data-action="mafTurnReveal">
+        <div class="big-emoji">🌙</div>
+        <div style="margin-top:10px;font-weight:700">Toque (só você)</div>
+      </div>
+    </div>`;
+  }
+  const aliveTargets=(filterFn)=>P.map((p,i)=>({p,i})).filter(({i})=>m.alive[i]&&filterFn(i));
+  const pick=m.turnPick;
+  const btn=(i,label)=>`<button class="btn ${pick===i?'btn-lime':'btn-ghost'}" data-action="mafPick:${i}" style="margin-bottom:8px;width:100%">${pick===i?'✓ ':''}${esc(label)}</button>`;
+
+  if(role==='mafia'){
+    const comrades=[];
+    for(let k=0;k<m.turnPos;k++){const pi=m.turnOrder[k];if(m.roles[pi]==='mafia'&&m.mafiaPicks[pi]!=null)comrades.push(`${esc(P[pi].name)} → ${esc(P[m.mafiaPicks[pi]].name)}`);}
+    const opts=aliveTargets(i=>m.roles[i]!=='mafia').map(({p,i})=>btn(i,p.name)).join('');
+    return `${bar()}<div class="screen stagger">
+      <div class="kicker" style="color:#bda4ff">Você é da Máfia 🔪</div>
+      <h1 style="font-size:clamp(22px,7vw,28px)">Quem a Máfia elimina?</h1>
+      ${comrades.length?`<div class="note" style="margin-top:10px">Comparsas já marcaram: ${comrades.join(' · ')}</div>`:`<p class="muted" style="font-size:13px">Escolha o alvo. Combine com seus comparsas na mesma vítima.</p>`}
+      <div style="margin-top:14px">${opts}</div>
+      <button class="btn btn-red btn-lg" data-action="mafTurnNext" ${pick==null?'disabled':''}>Confirmar e passar →</button>
+    </div>`;
+  }
+  if(role==='detective'){
+    const opts=aliveTargets(i=>i!==cur).map(({p,i})=>btn(i,p.name)).join('');
+    let result='';
+    if(pick!=null){ const isMaf=m.roles[pick]==='mafia';
+      result=`<div class="card" style="margin-top:8px;border-left:3px solid ${isMaf?'var(--red)':'var(--lime)'}">
+        <b>${esc(P[pick].name)}</b> ${isMaf?'<span style="color:var(--red)">É da Máfia. 🔪</span>':'<span style="color:var(--lime)">NÃO é da Máfia. ✅</span>'}
+        <div class="faint" style="font-size:12px;margin-top:4px">Memorize — essa info some quando você passar.</div>
+      </div>`; }
+    return `${bar()}<div class="screen stagger">
+      <div class="kicker" style="color:#8ec0ff">Você é o Detetive 🔎</div>
+      <h1 style="font-size:clamp(22px,7vw,28px)">Investigar quem?</h1>
+      <p class="muted" style="font-size:13px">Veja na hora se a pessoa é da Máfia.</p>
+      <div style="margin-top:14px">${opts}</div>
+      ${result}
+      <button class="btn btn-red btn-lg" data-action="mafTurnNext" ${pick==null?'disabled':''} style="margin-top:10px">Entendi — passar →</button>
+    </div>`;
+  }
+  if(role==='doctor'){
+    const opts=aliveTargets(()=>true).map(({p,i})=>btn(i,p.name+(i===cur?' (você)':''))).join('');
+    return `${bar()}<div class="screen stagger">
+      <div class="kicker" style="color:var(--lime)">Você é o Médico 🩺</div>
+      <h1 style="font-size:clamp(22px,7vw,28px)">Proteger quem esta noite?</h1>
+      <p class="muted" style="font-size:13px">Se a Máfia atacar essa pessoa, ela sobrevive. Pode se proteger.</p>
+      <div style="margin-top:14px">${opts}</div>
+      <button class="btn btn-red btn-lg" data-action="mafTurnNext" ${pick==null?'disabled':''}>Confirmar e passar →</button>
+    </div>`;
+  }
+  return `${bar()}<div class="screen pass">
+    <div class="big-emoji">😴</div>
+    <h1 style="font-size:clamp(24px,8vw,30px)" class="center">Você dorme.</h1>
+    <p class="muted center">Sem ação esta noite. Finja que está fazendo algo e passe o celular sem comentar.</p>
+    <button class="btn btn-red btn-lg" data-action="mafTurnNext" style="width:100%">Passar →</button>
+  </div>`;
+}
+function viewMafDay(){
+  const m=S.maf, P=S.players, {maf,city}=mafCounts();
+  let head, body;
+  if(m.lastSaved){ head='🩺 Ninguém morreu!'; body='A Máfia atacou, mas o Médico salvou a vítima. A noite passou em branco.'; }
+  else if(m.lastVictim!=null){ head=`☠️ ${esc(P[m.lastVictim].name)} foi morto(a).`; body=`Era <b>${roleName(m.roles[m.lastVictim])}</b>. A cidade amanhece com uma cadeira vazia.`; }
+  else { head='🌅 Noite tranquila.'; body='Ninguém foi eliminado nesta noite.'; }
+  const aliveList=P.map((p,i)=>m.alive[i]?`<span class="chip">${esc(p.name)}</span>`:'').filter(Boolean).join(' ');
+  const ended=!!m.winner;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:8px 0"><div class="big-emoji">☀️</div></div>
+    <h1 class="center" style="font-size:clamp(22px,7vw,28px)">Dia ${m.night}</h1>
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--gold)">
+      <b>${head}</b><p style="margin-top:6px;font-size:14px;line-height:1.5">${body}</p>
+    </div>
+    <div class="note" style="margin-top:12px">Vivos (${maf+city}): ${aliveList}</div>
+    <div class="spacer"></div>
+    ${ended
+      ? `<button class="btn btn-red btn-lg" data-action="mafEnd">Ver o resultado →</button>`
+      : `<p class="muted center" style="font-size:13px">Debatam quem é suspeito. Quando decidirem, votem.</p>
+         <button class="btn btn-red btn-lg" data-action="mafToVote">Ir para a votação →</button>`}
+  </div>`;
+}
+function viewMafVote(){
+  const m=S.maf, P=S.players;
+  const opts=P.map((p,i)=>m.alive[i]?`<button class="btn btn-ghost" data-action="mafElim:${i}" style="margin-bottom:8px;width:100%">${esc(p.name)}</button>`:'').filter(Boolean).join('');
+  return `${bar()}<div class="screen stagger">
+    <h1 style="font-size:clamp(24px,8vw,30px)">Votação · dia ${m.night}</h1>
+    <p class="muted">Discutam e escolham quem linchar. A maioria decide — toque no escolhido.</p>
+    <div style="margin-top:16px">${opts}</div>
+    <button class="btn btn-ghost btn-lg" data-action="mafElim:none">Empate — ninguém é eliminado</button>
+  </div>`;
+}
+function viewMafVoteResult(){
+  const m=S.maf, P=S.players, i=m.eliminated;
+  let head,body;
+  if(i==null){ head='🤐 Ninguém foi eliminado.'; body='O grupo não chegou a um acordo. A noite cai de novo.'; }
+  else{ const isMaf=m.roles[i]==='mafia';
+    head=`⚖️ ${esc(P[i].name)} foi eliminado(a).`;
+    body=`Era <b>${roleName(m.roles[i])}</b>. ${isMaf?'<span style="color:var(--lime)">A cidade acertou um da Máfia! 🎯</span>':'<span style="color:var(--red)">Era inocente… a Máfia agradece.</span>'}`;
+  }
+  const ended=!!m.winner;
+  return `${bar()}<div class="screen stagger">
+    <div class="center" style="margin:8px 0"><div class="big-emoji">⚖️</div></div>
+    <div class="card" style="margin-top:8px;border-left:3px solid ${i!=null&&m.roles[i]==='mafia'?'var(--lime)':'var(--red)'}">
+      <b>${head}</b><p style="margin-top:6px;font-size:14px;line-height:1.5">${body}</p>
+    </div>
+    <div class="spacer"></div>
+    ${ended
+      ? `<button class="btn btn-red btn-lg" data-action="mafEnd">Ver o resultado →</button>`
+      : `<button class="btn btn-red btn-lg" data-action="mafNextNight">Cai a noite 🌙</button>`}
+  </div>`;
+}
+function viewMafOver(){
+  const m=S.maf, P=S.players, win=m.winner;
+  const rolesList=P.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+    <span style="${m.alive[i]?'':'opacity:.5;text-decoration:line-through'}">${esc(p.name)}</span>
+    <span class="tag ${m.roles[i]==='mafia'?'maf':'reg'}" style="margin-top:0">${roleName(m.roles[i])}</span></div>`).join('');
+  return `<div id="conf"></div>${bar()}<div class="screen stagger">
+    <div class="center" style="margin:10px 0"><div class="big-emoji">${win==='mafia'?'🔪':'🛡️'}</div></div>
+    <h1 class="center" style="font-size:clamp(26px,9vw,34px)">${win==='mafia'?'A Máfia venceu!':'A Cidade venceu!'}</h1>
+    <p class="muted center">${win==='mafia'?'Eles tomaram a cidade. +2 para cada membro da Máfia.':'Toda a Máfia foi exposta. +2 para cada cidadão.'}</p>
+    <div class="card" style="margin-top:16px"><b>Papéis revelados</b><div style="margin-top:8px">${rolesList}</div></div>
+    <div class="spacer"></div>
+    <button class="btn btn-lime btn-lg" data-action="mafContinue">Somar pontos e seguir a noite →</button>
+    <div style="height:9px"></div>
+    <button class="btn btn-ghost" data-go="scoreboard">Ver placar</button>
+  </div>`;
+}
+
+document.addEventListener('click',(e)=>{
+  const t=e.target.closest('[data-action],[data-go],[data-game],[data-rm],[data-theme],[data-step],[data-rmcw]');
+  if(!t)return;
+  if(t.dataset.go){go(t.dataset.go);return;}
+  if(t.dataset.rm!==undefined){S.players.splice(+t.dataset.rm,1);render();return;}
+  if(t.dataset.rmcw!==undefined){S.customWords.splice(+t.dataset.rmcw,1);render();return;}
+  if(t.dataset.theme){S.theme=t.dataset.theme;render();return;}
+  if(t.dataset.step){
+    const [k,d]=t.dataset.step.split(':');const dv=+d;
+    if(k==='rounds')S.rounds=Math.max(1,Math.min(30,S.rounds+dv));
+    if(k==='discuss')S.discuss=Math.max(30,Math.min(600,S.discuss+dv));
+    render();return;
+  }
+  if(t.dataset.game){const g=GAMES.find(x=>x.id===t.dataset.game);if(g&&playable(g))startGame(g);return;}
+
+  const a=t.dataset.action;
+  switch(true){
+    case a==='toPlay':go(S.players.length>=2?'play':'players');break;
+    case a==='introDone':S.seenIntro=true;go('home');break;
+    case a==='installApp':{if(deferredPrompt){const dp=deferredPrompt;deferredPrompt=null;dp.prompt();dp.userChoice.finally(()=>render());}break;}
+    case a==='rerollPrompt':{
+      const g=S.game,r=S.round;
+      if(g.id==='botao')r.debate.text=pickNoRepeat(BOTAO,'botao');
+      else if(g.id==='opiniao')r.debate.text=pickNoRepeat(OPINIOES,'opiniao');
+      else if(g.id==='inutil')r.debate.text=pickNoRepeat(INUTIL,'inutil');
+      else if(g.id==='provavel')r.prompt=pickNoRepeat(MAIS_PROVAVEL,'prov');
+      else if(g.id==='silenciosas')r.prompt=pickNoRepeat(SILENCIOSAS,'sil');
+      else if(g.id==='quentes')r.prompt=pickNoRepeat(QUENTES,'qt');
+      render();break;
+    }
+    case a==='shareScore':shareScoreImage();break;
+    case a==='shareApp':{
+      const url=location.href.split('#')[0];
+      const data={title:'Noite de Jogos',text:'Joguinhos de festa pra jogar com um celular só. Bora?',url};
+      if(navigator.share){navigator.share(data).catch(()=>{});}
+      else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(()=>alert('Link copiado! Cola no grupo 😉')).catch(()=>prompt('Copie o link:',url));}
+      else{prompt('Copie o link:',url);}
+      break;
+    }
+    case a==='newOrKeep':resetNight();go(S.players.length>=2?'play':'players');break;
+    case a==='addP':addPlayer();break;
+    case a==='addCW':addCustom();break;
+    case a==='impHintOn':S.impHint=true;save();render();break;
+    case a==='impHintOff':S.impHint=false;save();render();break;
+    case a==='sortear':{
+      let pool=GAMES.filter(g=>playable(g)&&g.fam!=='intimo');if(!pool.length)return;
+      if(pool.length>1)pool=pool.filter(g=>g.id!==S.lastGameId);
+      startGame(pool[rnd(pool.length)]);break;
+    }
+    case a==='setupRound':setupRound();break;
+    case a==='flip':{
+      const c=$('#rcard');const card=S.round.cards[S.round.revealIdx];
+      if(c.classList.contains('hidden')){
+        c.className='reveal-card shown '+(card.type==='imp'?'impostor':'cidade')+' flip-in';
+        c.innerHTML=cardInner(card)+'<div style="margin-top:18px"><button class="btn btn-ghost btn-sm" data-action="nextReveal">Já vi — próximo →</button></div>';
+      }break;
+    }
+    case a==='nextReveal':S.round.revealIdx++;render();break;
+    case a==='flipHost':{
+      const c=$('#rcard');
+      c.className='reveal-card shown cidade flip-in';
+      c.innerHTML=`<div class="kicker">Regra secreta</div><p style="font-size:16px;line-height:1.55;margin-top:12px">${S.round.secret||S.game.secret||''}</p><div style="margin-top:18px"><button class="btn btn-lime btn-sm" data-action="toDiscuss">Entendi — começar ⏱</button></div>`;
+      break;
+    }
+    case a==='reHost':{
+      const g=S.game,r=S.round;
+      r.host=rnd(S.players.length);
+      if(g.variants){const v=pickNoRepeat(g.variants,'scenario');r.secret=v.secret;r.scenario={name:v.name,prompt:v.prompt};}
+      render();break;
+    }
+    case a==='flipClue':{
+      const c=$('#rcard');
+      c.className='reveal-card shown cidade flip-in';
+      c.innerHTML=`<div class="kicker">Conceito secreto</div><div class="big cid" style="font-size:clamp(26px,8vw,34px);margin:12px 0">${esc(S.round.concept)}</div><p class="muted" style="font-size:13px">Dê 3 pistas, uma de cada vez.</p><div style="margin-top:16px"><button class="btn btn-lime btn-sm" data-action="toDiscuss">Começar ⏱</button></div>`;
+      break;
+    }
+    case a==='reClue':S.round.clueGiver=rnd(S.players.length);render();break;
+    case a==='flipEntrevista':{
+      const c=$('#rcard');if(!c)break;
+      c.className='reveal-card shown cidade flip-in';
+      c.innerHTML=`<div class="kicker">Seu personagem secreto</div><div class="big cid" style="font-size:clamp(20px,6.5vw,28px);margin:12px 0">${esc(S.round.character)}</div><p class="muted" style="font-size:13px">Responda tudo como esse personagem. Não saia dele!</p><div style="margin-top:16px"><button class="btn btn-lime btn-sm" data-action="toEntrevistaQ">Memorizei — passar pro grupo →</button></div>`;
+      break;
+    }
+    case a==='reEntrevista':S.round.performer=rnd(S.players.length);S.round.character=PERSONAGENS[rnd(PERSONAGENS.length)];render();break;
+    case a==='toEntrevistaQ':go('entrevistaQ');break;
+    case a==='histNext':{const h=S.hist;h.pos=(h.pos+1)%h.order.length;h.turn++;h.word=nextHistWord();render();break;}
+    case a==='histEnd':clearInterval(histInt);go('histResolve');break;
+    case a&&a.startsWith('histPick:'):S.hist.bestSel=+a.split(':')[1];render();break;
+    case a==='histAward':{const i=S.hist&&S.hist.bestSel;if(i!=null)award([i],1);S.hist=null;nextRoundOrEnd();break;}
+    case a==='histSkip':S.hist=null;nextRoundOrEnd();break;
+    case a==='toProvavelResolve':go('provavelResolve');break;
+    case a&&a.startsWith('provavelPick:'):S.round.provSel=+a.split(':')[1];render();break;
+    case a==='provavelAward':{const i=S.round.provSel;if(i!=null)award([i],1);nextRoundOrEnd();break;}
+    case a==='provavelSkip':nextRoundOrEnd();break;
+
+    /* Duas Verdades e Uma Mentira */
+    case a==='flipVerdades':{
+      const c=$('#rcard');if(!c)break;const r=S.round;
+      c.className='reveal-card shown cidade flip-in';
+      c.innerHTML=`<div class="kicker">Sua mentira é a</div><div class="big cid" style="font-size:clamp(40px,14vw,56px);margin:8px 0">FRASE Nº ${r.liePos}</div><p class="muted" style="font-size:13px;max-width:280px">Conte 3 coisas sobre você, na ordem. A nº ${r.liePos} tem que ser a mentira. Ideia: ${esc(r.hint)}.</p><div style="margin-top:16px"><button class="btn btn-lime btn-sm" data-action="toVerdadesResolve">Memorizei — vou contar →</button></div>`;
+      break;
+    }
+    case a==='reVerdades':S.round.teller=rnd(S.players.length);S.round.liePos=1+rnd(3);render();break;
+    case a==='toVerdadesResolve':S.round.groupVote=null;go('verdadesResolve');break;
+    case a&&a.startsWith('verdadesVote:'):S.round.groupVote=+a.split(':')[1];render();break;
+    case a==='verdadesNext':{const r=S.round;
+      if(r.groupVote===r.liePos){const others=S.players.map((_,i)=>i).filter(i=>i!==r.teller);award(others,1);}
+      else award([r.teller],2);
+      nextRoundOrEnd();break;}
+
+    /* Quem Disse Isso? */
+    case a==='quemdisseSubmit':quemdisseSubmit();break;
+    case a&&a.startsWith('qdPick:'):S.round.qsel=+a.split(':')[1];render();break;
+    case a==='qdAward':if(S.round.qsel!=null)go('quemdisseResult');break;
+    case a==='qdNext':{const a2=S.round.shuffled[S.round.qsel];if(a2)award([a2.by],1);nextRoundOrEnd();break;}
+
+    /* Palavra Proibida */
+    case a==='flipProibida':{
+      const c=$('#rcard');if(!c)break;const t=S.round.taboo;
+      const forb=t.taboo.map(w=>`<span style="display:inline-block;background:rgba(255,59,92,.16);color:#ff8298;padding:4px 9px;border-radius:8px;margin:3px;font-size:13px;font-weight:600">${esc(w)}</span>`).join('');
+      c.className='reveal-card shown cidade flip-in';
+      c.innerHTML=`<div class="kicker">Faça adivinharem</div><div class="big cid" style="font-size:clamp(28px,9vw,38px);margin:8px 0">${esc(t.word)}</div><div class="kicker" style="color:var(--red);margin-top:6px">Não pode dizer</div><div style="margin:8px 0">${forb}</div><div style="margin-top:10px"><button class="btn btn-lime btn-sm" data-action="toDiscuss">Começar ⏱</button></div>`;
+      break;
+    }
+    case a==='reProibida':S.round.clueGiver=rnd(S.players.length);render();break;
+
+    /* Verdades Silenciosas */
+    case a==='toSilenciosasResolve':go('silenciosasResolve');break;
+    case a&&a.startsWith('silPick:'):S.round.silSel=+a.split(':')[1];render();break;
+    case a==='silAward':{const i=S.round.silSel;if(i!=null)award([i],1);nextRoundOrEnd();break;}
+    case a==='silSkip':nextRoundOrEnd();break;
+
+    /* Momentos Quentes */
+    case a==='toQuentesResolve':go('quentesResolve');break;
+    case a&&a.startsWith('qtPick:'):S.round.qtSel=+a.split(':')[1];render();break;
+    case a==='qtAward':{const i=S.round.qtSel;if(i!=null)award([i],1);nextRoundOrEnd();break;}
+    case a==='qtSkip':nextRoundOrEnd();break;
+    case a==='toDiscuss':S.round.timeLeft=S.discuss;S.round.endAt=Date.now()+S.discuss*1000;S.round.paused=false;go('discuss');break;
+    case a==='timerToggle':{
+      if(!S.round.paused){S.round.paused=true;S.round.timeLeft=Math.max(0,Math.ceil((S.round.endAt-Date.now())/1000));releaseWake();}
+      else{S.round.paused=false;S.round.endAt=Date.now()+S.round.timeLeft*1000;requestWake();}
+      const b=$('#ttg');if(b)b.textContent=S.round.paused?'▶ Continuar':'⏸ Pausar';break;
+    }
+    case a==='addTime':{
+      S.round.timeLeft+=30;
+      if(!S.round.paused)S.round.endAt+=30000;
+      const el=$('#timer');if(el)el.textContent=fmt(S.round.timeLeft);break;
+    }
+    case a==='toResolve':clearInterval(timerInt);releaseWake();go('resolve');break;
+    case a==='finishNoScore':nextRoundOrEnd();break;
+    case a&&a.startsWith('regToggle:'):{
+      const i=+a.split(':')[1];if(!S.round.regSel)S.round.regSel=[];
+      const k=S.round.regSel.indexOf(i);if(k>=0)S.round.regSel.splice(k,1);else S.round.regSel.push(i);
+      render();break;
+    }
+    case a==='regConfirm':{const sel=S.round.regSel||[];if(!sel.length)break;award(sel,1);nextRoundOrEnd();break;}
+    case a&&a.startsWith('res:'):applyResolve(a);break;
+    case a&&a.startsWith('debPick:'):S.round.debSel=+a.split(':')[1];render();break;
+    case a==='debAward':{const i=S.round.debSel;if(i==null)break;award([i],1);nextRoundOrEnd();break;}
+    case a&&a.startsWith('debSide:'):{const sp=S.round.debate.split;if(!sp)break;award(a.split(':')[1]==='a'?sp.a:sp.b,1);nextRoundOrEnd();break;}
+    case a&&a.startsWith('mafCfg:'):{
+      const [,k,d]=a.split(':');const m=S.maf;
+      if(k==='mafia')m.mafiaCount=Math.max(1,m.mafiaCount+(+d));
+      else if(k==='detective')m.detective=!m.detective;
+      else if(k==='doctor')m.doctor=!m.doctor;
+      render();break;
+    }
+    case a==='mafDealRoles':if(mafSetupValid())dealMafiaRoles();break;
+    case a==='mafDealFlip':{
+      const c=$('#rcard');if(!c)break;const m=S.maf,i=m.dealIdx,role=m.roles[i];
+      const isMaf=role==='mafia';
+      let inner;
+      if(isMaf){
+        const mates=S.players.map((p,k)=>k!==i&&m.roles[k]==='mafia'?esc(p.name):'').filter(Boolean);
+        inner=`<div class="kicker" style="color:#bda4ff">Seu papel</div><div class="big" style="color:#bda4ff;font-size:clamp(26px,9vw,36px)">MÁFIA 🔪</div>
+          <p class="muted" style="font-size:13.5px;max-width:300px">${mates.length?'Seus comparsas: <b style="color:#bda4ff">'+mates.join(', ')+'</b>. Combinem a vítima na calada.':'Você é a única Máfia. Aja sozinho.'}</p>`;
+      } else {
+        const meta={detective:['🔎','DETETIVE','#8ec0ff','Toda noite você investiga 1 pessoa e descobre se é da Máfia.'],
+          doctor:['🩺','MÉDICO','var(--lime)','Toda noite você protege 1 pessoa (pode ser você) de morrer.'],
+          cidadao:['🧑','CIDADÃO','var(--lime)','Sem poder especial. Use voto e dedução pra achar a Máfia.']}[role];
+        inner=`<div class="kicker">Seu papel</div><div class="big" style="color:${meta[2]};font-size:clamp(24px,8vw,32px)">${meta[1]} ${meta[0]}</div>
+          <p class="muted" style="font-size:13.5px;max-width:300px">${meta[3]}</p>`;
+      }
+      c.className='reveal-card shown '+(isMaf?'impostor':'cidade')+' flip-in';
+      c.innerHTML=inner+'<div style="margin-top:18px"><button class="btn btn-ghost btn-sm" data-action="mafDealNext">Guardei — próximo →</button></div>';
+      break;
+    }
+    case a==='mafDealNext':S.maf.dealIdx++;render();break;
+    case a==='mafToNight':go('mafNight');break;
+    case a==='mafStartTurns':{
+      const m=S.maf;
+      m.turnOrder=S.players.map((_,i)=>i).filter(i=>m.alive[i]);
+      m.turnPos=0;m.turnRevealed=false;m.turnPick=null;m.mafiaPicks={};m.doctorSave=null;
+      go('mafTurn');break;
+    }
+    case a==='mafTurnReveal':S.maf.turnRevealed=true;render();break;
+    case a&&a.startsWith('mafPick:'):{
+      S.maf.turnPick=+a.split(':')[1];render();break;
+    }
+    case a==='mafTurnNext':{
+      const m=S.maf,cur=m.turnOrder[m.turnPos],role=m.roles[cur];
+      if(role==='mafia'&&m.turnPick!=null)m.mafiaPicks[cur]=m.turnPick;
+      else if(role==='doctor'&&m.turnPick!=null)m.doctorSave=m.turnPick;
+      m.turnPos++;m.turnRevealed=false;m.turnPick=null;
+      if(m.turnPos>=m.turnOrder.length){resolveNight();go('mafDay');}
+      else render();
+      break;
+    }
+    case a==='mafToVote':go('mafVote');break;
+    case a&&a.startsWith('mafElim:'):{
+      const m=S.maf,v=a.split(':')[1];
+      if(v==='none'){m.eliminated=null;}
+      else{const i=+v;m.alive[i]=false;m.eliminated=i;m.winner=checkWin();}
+      go('mafVoteResult');break;
+    }
+    case a==='mafNextNight':{const m=S.maf;m.night++;m.eliminated=null;go('mafNight');break;}
+    case a==='mafEnd':endMafia();break;
+    case a==='mafContinue':S.maf=null;nextRoundOrEnd();break;
+    case a==='newNight':resetNight();go('home');break;
+    case a==='moreRounds':S.rounds+=3;S.currentRound++;S.game=null;S.round=null;go('play');break;
   }
 });
 
-$('btn-criar-sala').addEventListener('click', async () => {
-  esconderErro('erro-criar-sala');
-  const nickname = $('input-nickname-host').value.trim();
-  if (!nickname) { mostrarErro('erro-criar-sala', 'Preenche seu apelido.'); return; }
-
-  try {
-    const room = await createRoom({ gameId: 'stop' });
-    const session = await ensureSession();
-    const { data: player, error } = await supabase
-      .from('room_players')
-      .insert({ room_id: room.id, session_uid: session.user.id, nickname, avatar_emoji: '👑' })
-      .select().single();
-    if (error) throw error;
-
-    state.room = room; state.player = player;
-    abrirLobby();
-  } catch (err) {
-    mostrarErro('erro-criar-sala', err.message);
-  }
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&S.screen==='discuss'&&S.round&&!S.round.paused)requestWake();
 });
 
-$('btn-abrir-login').addEventListener('click', () => irPara('tela-login'));
-$('btn-ir-cadastro').addEventListener('click', () => irPara('tela-cadastro'));
-$('btn-voltar-entrada-1').addEventListener('click', () => irPara('tela-entrada'));
-$('btn-voltar-entrada-2').addEventListener('click', () => irPara('tela-entrada'));
-
-$('btn-fazer-login').addEventListener('click', async () => {
-  esconderErro('erro-login');
-  try {
-    await signIn($('login-email').value.trim(), $('login-senha').value);
-    irPara('tela-entrada');
-  } catch (err) {
-    mostrarErro('erro-login', 'E-mail ou senha incorretos.');
+function confetti(){
+  const c=$('#conf');if(!c)return;
+  const cols=['#ffcb45','#c6f24e','#ff3b5c','#8ec0ff','#fff'];
+  for(let i=0;i<70;i++){
+    const d=document.createElement('div');d.className='conf';
+    d.style.left=Math.random()*100+'%';
+    d.style.background=cols[rnd(cols.length)];
+    d.style.animationDuration=(2+Math.random()*2.5)+'s';
+    d.style.animationDelay=Math.random()*1.2+'s';
+    d.style.transform='rotate('+rnd(360)+'deg)';
+    c.appendChild(d);
   }
+  setTimeout(()=>{if(c)c.innerHTML='';},5000);
+}
+
+load();
+if(!S.seenIntro)S.screen='intro';
+document.getElementById('app').innerHTML='<div class="wrap" style="padding:40px 20px;text-align:center"><h1>🎲 Noite de Jogos</h1><p class="muted">Carregando…</p></div>';
+loadData().then(render).catch(err=>{
+  document.getElementById('app').innerHTML='<div class="wrap" style="padding:32px 20px"><h1>Não deu pra carregar o conteúdo</h1><p>Faltou o arquivo <b>data/'+err.message+'</b>.</p><p class="muted">Este app precisa ser aberto por um endereço http(s) (GitHub Pages, Vercel ou um servidor local). Abrir o index.html direto com dois cliques não carrega a pasta /data.</p></div>';
+  console.error(err);
 });
 
-$('btn-fazer-cadastro').addEventListener('click', async () => {
-  esconderErro('erro-cadastro');
-  const nickname = $('cadastro-nickname').value.trim();
-  const email = $('cadastro-email').value.trim();
-  const senha = $('cadastro-senha').value;
-  if (!nickname || !email || senha.length < 6) {
-    mostrarErro('erro-cadastro', 'Preenche apelido, e-mail e senha (mín. 6 caracteres).');
-    return;
-  }
-  try {
-    await signUp(email, senha, nickname);
-    irPara('tela-entrada');
-  } catch (err) {
-    mostrarErro('erro-cadastro', err.message);
-  }
+/* PWA: service worker + prompt de instalação */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});
+}
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault(); deferredPrompt=e;
+  if(S.screen==='home')render();
 });
-
-// ============================================================
-// UI — TELA LOBBY
-// ============================================================
-let unsubscribeLobby = null;
-
-async function abrirLobby() {
-  irPara('tela-lobby');
-  $('lobby-codigo').textContent = state.room.code;
-
-  const { data: { user } } = await supabase.auth.getUser();
-  const souHost = state.room.host_profile_id ? state.room.host_profile_id === user.id : true;
-
-  $('btn-iniciar-jogo').hidden = !souHost;
-  $('lobby-esperando').hidden = souHost;
-
-  renderizarJogadores(await buscarJogadores(state.room.id));
-
-  if (unsubscribeLobby) unsubscribeLobby();
-  unsubscribeLobby = subscribeToRoom(state.room.id, {
-    onPlayersChange: async () => renderizarJogadores(await buscarJogadores(state.room.id)),
-    onRoomChange: (payload) => {
-      if (payload.new.status === 'playing') abrirStop();
-    }
-  });
-
-  $('btn-iniciar-jogo').onclick = async () => {
-    try {
-      await iniciarJogo();
-    } catch (err) {
-      mostrarErroLobby(err.message);
-    }
-  };
-}
-
-async function buscarJogadores(roomId) {
-  const { data, error } = await supabase.from('room_players').select('*').eq('room_id', roomId).order('joined_at', { ascending: true });
-  if (error) throw error;
-  return data;
-}
-
-function renderizarJogadores(jogadores) {
-  const lista = $('lobby-jogadores');
-  lista.innerHTML = '';
-  jogadores.forEach((j) => {
-    const li = document.createElement('li');
-    li.textContent = `${j.avatar_emoji} ${j.nickname}${j.is_connected ? '' : ' (desconectado)'}`;
-    lista.appendChild(li);
-  });
-  if (jogadores.length < 2) mostrarErroLobby('Precisa de pelo menos 2 jogadores pra começar.');
-  else esconderErroLobby();
-}
-
-async function iniciarJogo() {
-  const jogadores = await buscarJogadores(state.room.id);
-  if (jogadores.length < 2) throw new Error('Precisa de pelo menos 2 jogadores pra começar.');
-
-  const { error } = await supabase.from('rooms').update({ status: 'playing' }).eq('id', state.room.id);
-  if (error) throw error;
-
-  const round = await startStopRound(state.room.id, 1, state.room.theme_id);
-  state.round = round;
-  // onRoomChange (Realtime) cuida de levar os outros jogadores pro Stop;
-  // o host navega direto aqui pra não esperar o próprio evento voltar.
-  abrirStop();
-}
-
-function mostrarErroLobby(msg) {
-  const el = $('erro-lobby');
-  el.textContent = msg; el.hidden = false;
-  $('btn-iniciar-jogo').disabled = true;
-}
-function esconderErroLobby() {
-  $('erro-lobby').hidden = true;
-  $('btn-iniciar-jogo').disabled = false;
-}
-
-// ============================================================
-// UI — TELA STOP
-// ============================================================
-let timerInterval;
-let unsubscribeStop = null;
-
-async function abrirStop() {
-  // se não é o host, ainda não tem state.round — busca a rodada ativa da sala
-  if (!state.round) {
-    const { data, error } = await supabase
-      .from('stop_rounds').select('*').eq('room_id', state.room.id)
-      .order('round_number', { ascending: false }).limit(1).single();
-    if (error) { console.error(error); return; }
-    state.round = data;
-  }
-
-  irPara('tela-stop');
-  $('stop-letra').textContent = state.round.letter;
-  $('btn-stop').disabled = true; // começa travado até preencher tudo — ver atualizarEstadoBotaoStop
-  $('stop-votacao').hidden = true;
-  $('stop-resultado').hidden = true;
-  renderizarCategorias(state.round.categories);
-  iniciarTimer(state.round.started_at);
-
-  $('btn-stop').onclick = async () => {
-    try {
-      await pressStop(state.round.id, state.player.id);
-      $('btn-stop').disabled = true;
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  if (unsubscribeStop) unsubscribeStop();
-  const channel = supabase.channel(`stop_round:${state.round.id}`)
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'stop_rounds', filter: `id=eq.${state.round.id}` }, (payload) => {
-      if (payload.new.stopped_at) encerrarRodada();
-    })
-    .subscribe();
-  unsubscribeStop = () => supabase.removeChannel(channel);
-}
-
-function renderizarCategorias(categorias) {
-  const container = $('stop-categorias');
-  container.innerHTML = '';
-  categorias.forEach((cat) => {
-    const div = document.createElement('div');
-    div.className = 'stop-categoria';
-    div.innerHTML = `<label>${cat}</label><input type="text" data-categoria="${cat}" maxlength="40" />`;
-    const input = div.querySelector('input');
-    let debounceTimer;
-    input.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        submitAnswer(state.round.id, state.player.id, cat, input.value).catch(console.error);
-        atualizarEstadoBotaoStop(categorias);
-      }, 400);
-    });
-    container.appendChild(div);
-  });
-  atualizarEstadoBotaoStop(categorias);
-}
-
-// Stop só é permitido depois que TODAS as categorias têm resposta
-// não-vazia. Regra clássica do jogo — sem isso, dava pra "trapacear"
-// parando a rodada com tudo em branco.
-function atualizarEstadoBotaoStop(categorias) {
-  const inputs = document.querySelectorAll('#stop-categorias input');
-  const todasPreenchidas = Array.from(inputs).every((i) => i.value.trim().length > 0);
-  $('btn-stop').disabled = !todasPreenchidas;
-  $('btn-stop').title = todasPreenchidas ? '' : 'Preenche todas as categorias antes de dar Stop';
-}
-
-function iniciarTimer(startedAtIso) {
-  clearInterval(timerInterval);
-  const inicio = new Date(startedAtIso).getTime();
-  const fim = inicio + 60_000;
-
-  timerInterval = setInterval(() => {
-    const restanteMs = fim - Date.now();
-    const restanteS = Math.max(0, Math.ceil(restanteMs / 1000));
-    $('stop-timer').textContent = `${restanteS}s`;
-    if (restanteMs <= 0) {
-      clearInterval(timerInterval);
-      pressStop(state.round.id, state.player.id).catch(() => {});
-    }
-  }, 250);
-}
-
-async function encerrarRodada() {
-  clearInterval(timerInterval);
-  $('btn-stop').disabled = true;
-  const respostas = await getRoundAnswers(state.round.id);
-  mostrarVotacao(respostas);
-}
-
-function mostrarVotacao(respostas) {
-  $('stop-votacao').hidden = false;
-  const container = $('stop-votacao-lista');
-  container.innerHTML = '';
-
-  respostas.filter((r) => r.player_id !== state.player.id).forEach((r) => {
-    const div = document.createElement('div');
-    div.className = 'stop-voto-item';
-    div.innerHTML = `
-      <span>${r.category}: <b>${r.answer || '(em branco)'}</b> — ${r.room_players?.nickname || '?'}</span>
-      <button data-answer-id="${r.id}" data-valido="true">✅</button>
-      <button data-answer-id="${r.id}" data-valido="false">❌</button>
-    `;
-    container.appendChild(div);
-  });
-
-  container.querySelectorAll('button').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      await voteAnswer(btn.dataset.answerId, btn.dataset.valido === 'true');
-      btn.parentElement.style.opacity = '0.5';
-      btn.parentElement.querySelectorAll('button').forEach((b) => (b.disabled = true));
-    });
-  });
-
-  $('btn-finalizar-votacao').onclick = async () => {
-    for (const r of respostas) {
-      if (r.player_id !== state.player.id) await finalizeVoting(r.id);
-    }
-    const pontos = calcularPontuacao(respostas);
-    mostrarResultado(pontos, respostas);
-  };
-}
-
-function mostrarResultado(pontos, respostas) {
-  $('stop-votacao').hidden = true;
-  $('stop-resultado').hidden = false;
-
-  const lista = $('stop-placar');
-  lista.innerHTML = '';
-  const nomesPorJogador = {};
-  respostas.forEach((r) => { nomesPorJogador[r.player_id] = r.room_players?.nickname || '?'; });
-
-  Object.entries(pontos).sort((a, b) => b[1] - a[1]).forEach(([playerId, p]) => {
-    const li = document.createElement('li');
-    li.textContent = `${nomesPorJogador[playerId] || playerId}: ${p} pontos`;
-    lista.appendChild(li);
-  });
-
-  $('btn-proxima-rodada').onclick = async () => {
-    const proximoNumero = state.round.round_number + 1;
-    const novaRodada = await startStopRound(state.room.id, proximoNumero, state.room.theme_id);
-    state.round = novaRodada;
-    await supabase.from('rooms').update({ status: 'playing' }).eq('id', state.room.id);
-    abrirStop();
-  };
-
-  $('btn-sair-sala').onclick = () => {
-    if (unsubscribeLobby) unsubscribeLobby();
-    if (unsubscribeStop) unsubscribeStop();
-    state.room = null; state.player = null; state.round = null;
-    irPara('tela-entrada');
-  };
-}
+window.addEventListener('appinstalled',()=>{deferredPrompt=null;});
 </script>
 </body>
 </html>
